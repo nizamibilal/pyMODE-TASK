@@ -3,6 +3,7 @@
 
 #import Tkinter as Tk
 from Tkinter import *
+import subprocess
 #from Tkinter import ttk
 import ttk
 import Pmw
@@ -121,7 +122,7 @@ class App:
 		# about section
 		
 		about_pca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
-To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
+To perform the Priciple component analysis (PCA) on a protein MD trajectory."""		
 		self.pca_top_group = Pmw.Group(self.pca_page,tag_text='About')
 		self.pca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
@@ -144,7 +145,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		# input files
 		
 		self.pca_trj_file_io = Pmw.Group(self.pca_page, tag_text='MODE-TASK Input/Output')
-		self.pca_trj_file_io.pack(side = TOP,expand=1, fill='x')
+		self.pca_trj_file_io.pack(side = TOP,expand=1, fill='both', padx = 4, pady = 4)
 		
 		
 		# Read Trajectory 
@@ -183,7 +184,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		# PCA options
 		# PCA Methods
 		self.pca_page_main_group = Pmw.Group(self.pca_page, tag_text='PCA Options')
-		self.pca_page_main_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		self.pca_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
 		
 		self.pca_methods_buttons = Pmw.RadioSelect(self.pca_page_main_group.interior(),
 				buttontype = 'radiobutton',
@@ -278,34 +279,31 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
 		# status bar
+		
 		#self.bytes = 0
-		#self.maxbytes = 0
+		#self.maxbytes = 0 destroy
 		#self.progress["value"] = 0
 		#self.maxbytes = 50000
 		#self.progress["maximum"] = 50000
-		self.progress = ttk.Progressbar(self.pca_page_main_group.interior(), orient="horizontal",
-										length=200, mode="indeterminate")
-		self.progress.pack()
-		
-		pca_output='test'
-		self.pca_output_group = Pmw.Group(self.pca_page, tag_text='Results')
-		self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
-		self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
-                             borderframe=5,
-                             vscrollmode='dynamic',
-                             hscrollmode='dynamic',
-                             labelpos='n',
-                             text_width=150, text_height=4,
-                             text_wrap='word',
-                             text_background='#000000',
-                             text_foreground='white',
-                             text_font = myfont
-                             )
-		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-		self.status_feild.insert('end',pca_output)
-		self.status_feild.configure(text_state=DISABLED)
-		
-		#============================================================
+		#self.progress = ttk.Progressbar(self.pca_page_main_group.interior(), orient="horizontal",
+										#length=200, mode="indeterminate")
+		#self.progress.pack()
+		#pca_output='test'
+		#self.pca_output_group = Pmw.Group(self.pca_page, tag_text='Results')
+		#self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		#self.pca_status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
+        #                     borderframe=5,
+        #                     vscrollmode='dynamic',
+        #                     hscrollmode='dynamic',
+        #                     labelpos='n',
+        #                     text_width=150, text_height=4,
+        #                     text_wrap='word',
+        #                     text_background='#000000',
+        #                     text_foreground='white',
+        #                     text_font = myfont
+        #                     )
+		#
+		##============================================================
 		#
 		#	internal PCA page
 		#===========================================================
@@ -889,6 +887,8 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		global_status.set( 'Wrote box info to %s' % filename)
 	
 	def run_pca(self):
+		#self.progress.pack()
+		
 		cmd_dir = './src'
 		trj_loc = self.pca_trj_location.getvalue()
 		top_loc = self.pca_top_location.getvalue()
@@ -899,11 +899,15 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		pc_comp = self.pca_comp.getvalue()
 		out_loc = self.pca_out_dir_location.getvalue()
 		ref_loc = self.pca_ref_file.getvalue()
+		#p = subprocess.Popen('./script',stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+
+
 		if trj_loc == '':
 			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
 		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
 		if top_loc == '':
 			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+		
 		else:
 			if ref_loc != '':
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
@@ -912,9 +916,22 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 				tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
 		#print os.system(cmd)
+			#self.progress.start()
+			#p = subprocess.Popen('pwd',stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+			#output, errors = p.communicate()
+			#print output
+			#print errors
 			out = `os.system(cmd)` 
+			#self.pca_status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+			#self.progress.stop()
+			#self.pca_status_feild.insert('end',pca_output)3e
+			#self.pca_status_feild.insert("end", output)
+			#self.pca_status_feild.configure(text_state=DISABLED)
 			tkMessageBox.showinfo("pyMODE-TASK!", "PCA run successful!\nResults are written in Output Directory!")
-			return out
+			#self.progress.start()
+			
+
+			#return out
 		#pca_output = os.system(cmd)
 		#return pca_outputd
 		

@@ -37,7 +37,8 @@ class App:
 		self.help_page = self.notebook.add('Help')
 		
 		#---------------------------------------------------------------
-        # PCA PAGE
+        # 							PCA PAGE
+		#---------------------------------------------------------------
 		
 		# about section
 		
@@ -82,9 +83,8 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		
 		self.ref_file = Pmw.EntryField(self.trj_file_io.interior(),
                                                 labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_top_filename,mode='r',filter=[("PDB",".pdb"), ("All","*.*")]),                                                
-                                                label_text = 'Ref Structure/Frame:',
-												value='First')
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_ref_filename,mode='r',filter=[("PDB",".pdb"), ("All","*.*")]),                                                
+                                                label_text = 'Ref Structure/Frame:')
 		# output directory
 		
 		self.out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
@@ -115,12 +115,12 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 				frame_relief = 'groove',
 				command = self.get_pc_method_selection)
 		self.pca_methods_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.pca_methods_buttons.add('SVD', command = self.ok)
-		self.pca_methods_buttons.add('EVD', command = self.ok)
-		self.pca_methods_buttons.add('kPCA', command = self.ok)
-		self.pca_methods_buttons.add('iPCA', command = self.ok)
+		self.pca_methods_buttons.add('svd', command = self.ok)
+		self.pca_methods_buttons.add('evd', command = self.ok)
+		self.pca_methods_buttons.add('kpca', command = self.ok)
+		self.pca_methods_buttons.add('ipca', command = self.ok)
 		
-		self.pca_methods_buttons.invoke('SVD')
+		self.pca_methods_buttons.invoke('svd')
 		
 		# Atom group 
 		self.atm_grp_buttons = Pmw.RadioSelect(self.pca_page_main_group.interior(),
@@ -199,6 +199,70 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
 		# status bar
+		pca_output='test'
+		self.pca_output_group = Pmw.Group(self.pca_page, tag_text='Results')
+		self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
+                             borderframe=5,
+                             vscrollmode='dynamic',
+                             hscrollmode='dynamic',
+                             labelpos='n',
+                             text_width=150, text_height=4,
+                             text_wrap='word',
+                             text_background='#000000',
+                             text_foreground='white',
+                             text_font = myfont
+                             )
+		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.status_feild.insert('end',pca_output)
+		
+		#---------------------------------------------------------------
+        # NMA PAGE
+		#==============================================================
+		
+		#---------------------------------------------------------------
+        # ABOUT PAGE
+		#=======================================================
+		
+		# about section
+		
+		about_pca = """
+
+pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.
+		
+MODE-TASK is a collection of tools for analysing normal modes and performing principal component analysis.		
+pyMODE-TASK is the pymol plugin of MODE-TASK. Orignal command line version of MODE-TASK can be found at https://github.com/RUBi-ZA/MODE-TASK. 
+
+Authours. (1)- MODE-TASK, CJ Ross, B Nizami, M Glenister, OS Amamuddy, AR Atilgan, C Atilgan and O Tastan Bishop.
+
+(2)- pyMODE-TASK is written by:
+
+Bilal Nizami
+
+Research Unit in Bioinformatics (RUBi)
+Rhodes University
+Grahamstown, South Africa   
+https://rubi.ru.ac.za 
+2017. 
+
+email: nizamibilal1064@gmail.com"""
+		self.configuration_top_group = Pmw.Group(self.about_page,tag_text='About')
+		self.configuration_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+
+		myfont = Pmw.logicalfont(name='Courier',size=14, spacing='2')
+		self.text_field = Pmw.ScrolledText(self.configuration_top_group.interior(),
+                             borderframe=5,
+                             vscrollmode='dynamic',
+                             hscrollmode='dynamic',
+                             labelpos='n',
+                             text_width=150, text_height=40,
+                             text_wrap='word',
+                             text_background='White',
+                             text_foreground='Black',
+                             text_font = myfont
+                             )
+		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.insert('end',about_pca)
 		
 		
 	def button_pressed(self, result):
@@ -282,6 +346,8 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
 		cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
 		print os.system(cmd)
+		#pca_output = os.system(cmd)
+		#return pca_output
 		
 		
 	def set_trj_filename(self, filename):
@@ -310,6 +376,9 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 
 	def set_top_filename(self, filename):
 		self.top_location.setvalue(filename)
+		
+	def set_ref_filename(self, filename):
+		self.ref_file.setvalue(filename)
 		
 	def set_out_location(self, dirname):
 		self.out_dir_location.setvalue(dirname)

@@ -31,6 +31,7 @@ class App:
 
         # build pages
 		self.pca_page = self.notebook.add('PCA')
+		self.ipca_page = self.notebook.add('Internal PCA')
 		self.nma_page = self.notebook.add('NMA')
 		self.about_page = self.notebook.add('About')
 		self.citation_page = self.notebook.add('Citation')
@@ -44,11 +45,11 @@ class App:
 		
 		about_pca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
 To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
-		self.configuration_top_group = Pmw.Group(self.pca_page,tag_text='About')
-		self.configuration_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+		self.pca_top_group = Pmw.Group(self.pca_page,tag_text='About')
+		self.pca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
 		myfont = Pmw.logicalfont(name=adplugin_font[0],size=int(adplugin_font[1]))
-		self.text_field = Pmw.ScrolledText(self.configuration_top_group.interior(),
+		self.text_field = Pmw.ScrolledText(self.pca_top_group.interior(),
                              borderframe=5,
                              vscrollmode='dynamic',
                              hscrollmode='dynamic',
@@ -246,11 +247,11 @@ https://rubi.ru.ac.za
 2017. 
 
 email: nizamibilal1064@gmail.com"""
-		self.configuration_top_group = Pmw.Group(self.about_page,tag_text='About')
-		self.configuration_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+		self.about_top_group = Pmw.Group(self.about_page,tag_text='About')
+		self.about_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
 		myfont = Pmw.logicalfont(name='Courier',size=14, spacing='2')
-		self.text_field = Pmw.ScrolledText(self.configuration_top_group.interior(),
+		self.text_field = Pmw.ScrolledText(self.about_top_group.interior(),
                              borderframe=5,
                              vscrollmode='dynamic',
                              hscrollmode='dynamic',
@@ -264,7 +265,121 @@ email: nizamibilal1064@gmail.com"""
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',about_pca)
 		
+		# Exit button
 		
+		self.exit_pca = Pmw.ButtonBox(self.about_top_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
+		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
+		
+		#---------------------------------------------------------------
+        # CITATION PAGE
+		#=======================================================
+		
+		# citation section
+		
+		citation = """
+
+pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.
+		
+pyMODE-TASK is a pymol plugin for MODE-TASK. If you use MODE-TASK and/or pyMODE-TASK, kindly cite the 
+following papers.
+
+(1)- MODE-TASK, CJ Ross, B Nizami, M Glenister, OS Amamuddy, AR Atilgan, C Atilgan and O Tastan Bishop.
+
+(2)- pyMODE-TASK is written by:
+
+Bilal Nizami
+
+Research Unit in Bioinformatics (RUBi)
+Rhodes University
+Grahamstown, South Africa   
+https://rubi.ru.ac.za 
+2017. 
+
+Report bug at:
+
+email: nizamibilal1064@gmail.com"""
+		self.citation_top_group = Pmw.Group(self.citation_page,tag_text='Citation')
+		self.citation_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+
+		myfont = Pmw.logicalfont(name='Times',size=14, spacing='2')
+		self.text_field = Pmw.ScrolledText(self.citation_top_group.interior(),
+                             borderframe=5,
+                             vscrollmode='dynamic',
+                             hscrollmode='dynamic',
+                             labelpos='n',
+                             text_width=150, text_height=40,
+                             text_wrap='word',
+                             text_background='White',
+                             text_foreground='Black',
+                             text_font = myfont
+                             )
+		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.insert('end',citation)
+		
+		# Exit button
+		
+		self.exit_pca = Pmw.ButtonBox(self.citation_top_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
+		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
+		
+		#---------------------------------------------------------------
+        # HELP PAGE
+		#=======================================================
+		
+		help = """
+See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/index.html
+
+"""
+		link = '''Read the doc'''
+		
+		self.help_top_group = Pmw.Group(self.help_page,tag_text='Help')
+		self.help_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+		
+		myfont = Pmw.logicalfont(name='Courier',size=14, spacing='2')
+		self.text_field = Pmw.ScrolledText(self.help_top_group.interior(),
+                             borderframe=5,
+                             vscrollmode='dynamic',
+                             hscrollmode='dynamic',
+                             labelpos='n',
+                             text_width=150, text_height=3,
+                             text_wrap='word',
+                             text_background='White',
+                             text_foreground='Black',
+                             text_font = myfont
+                             )
+		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.insert('end',help)
+		
+		# Create dialog.
+		Pmw.aboutversion('1.0')
+		Pmw.aboutcopyright('Copyright Bilal Nizami 2017\nAll rights reserved')
+		Pmw.aboutcontact(
+            'To report bug, help and suggestion contact:\n' +
+            '  email: nizamibilal1064@gmail'
+		)
+		self.about = Pmw.AboutDialog(self.help_top_group.interior(), applicationname = 'pyMODE-TASK')
+		self.about.withdraw()
+
+        # Create button to launch the dialog.
+		w = Button(self.help_top_group.interior(), text = 'About pyMODE-TASK',
+				command = self.execute)
+		w.pack(padx = 8, pady = 8)
+		
+		
+		# Exit button
+		
+		self.exit_pca = Pmw.ButtonBox(self.help_top_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
+		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
+		
+
+	def execute(self):
+		self.about.show()
+		
+	def click_link(self):
+		webbrowser.open_new(r"http://www.google.com")
+	
 	def button_pressed(self, result):
 		if hasattr(result,'keycode'):
 			if result.keycode == 36:

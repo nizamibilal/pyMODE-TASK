@@ -28,7 +28,7 @@ install:
   - sudo apt-get install python-tk
   - wget http://download.sourceforge.net/pmw/Pmw.1.3.tar.gz
   - tar -xvf Pmw.1.3.tar.gz
-  - pushd ./src && sudo python setup.py install
+  - pushd ./src/Pmw && sudo python setup.py install
 
 script: 
   - cd tests

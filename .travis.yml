@@ -32,7 +32,7 @@ install:
   - pip install matplotlib==2.0.2
   - pip install mdtraj==1.8.0
   - sudo apt-get install python-tk
-  - sudo python setup.py install
+  - sudo python src/setup.py install
 
 script: 
   - cd tests

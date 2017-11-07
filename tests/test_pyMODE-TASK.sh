@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd ..
-
-.././pypca.py
+pwd
+./pypca.py

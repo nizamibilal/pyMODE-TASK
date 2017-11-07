@@ -23,7 +23,7 @@ class App:
 				background = 'navy',
 				foreground = 'white', 
 				height=1, 
-				width=1000,
+				width=900,
 				font=('Arial', 11))
 		self.title_label.pack(expand = 0, fill = 'both', padx = 1, pady = 1)
 		
@@ -61,8 +61,8 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 			labelpos='n',
 			text_width=150, text_height=4,
 			text_wrap='word',
-			text_background='#000000',
-			text_foreground='green',
+			text_background='white',
+			text_foreground='black',
 			text_font = myfont)
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -220,6 +220,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
                              text_font = myfont
                              )
 		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		#pca_output=self.run_pca
 		self.status_feild.insert('end',pca_output)
 		
 		#============================================================
@@ -242,8 +243,8 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			labelpos='n',
 			text_width=150, text_height=4,
 			text_wrap='word',
-			text_background='#000000',
-			text_foreground='green',
+			text_background='white',
+			text_foreground='black',
 			text_font = myfont)
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -364,6 +365,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
                              )
 		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.status_feild.insert('end',pca_output)
+		#sys.stdout = StdoutRedirector(self.status_feild)
 		
 		#==============================================================
         # NMA PAGE
@@ -608,7 +610,9 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
 		ref_loc = self.ref_file.getvalue()
 		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
 		cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
-		print os.system(cmd)
+		#print os.system(cmd)
+		out = `os.system(cmd)` 
+		return out
 		#pca_output = os.system(cmd)
 		#return pca_output
 		
@@ -623,7 +627,7 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
 		out_loc = self.out_dir_location.getvalue()
 		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
 		cmd = './src/internal_pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele
-		print cmd
+		#print cmd
 		print os.system(cmd)
 		#pca_output = os.system(cmd)
 		#return pca_output
@@ -1151,6 +1155,16 @@ class MyFileDialog:
             return None
         else:
             return result
+
+class IORedirector(object):
+	'''A general class for redirecting I/O to this Text widget.'''
+	def __init__(self,text_area):
+		self.text_area = text_area
+class StdoutRedirector(IORedirector):
+	'''A class for redirecting stdout to this Text widget.'''
+	def write(self,message):
+		self.text_area.insert("insert", message)
+			
 root = Tk()
 app = App(root)
 root.title("pyMODE-TASK")

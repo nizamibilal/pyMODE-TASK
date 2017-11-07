@@ -371,6 +371,163 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
         # NMA PAGE
 		#==============================================================
 		
+		about_nma = """NMA analyses the oscillations of a structure. For proteins, it is useful
+for studying the large amplitude motions for a selected conformation. The main assumption
+is that the motions are harmonic. Thus, each normal mode, which is a concerted motion of 
+many atoms, acts as a simple harmonic oscillator, and it is independent of all the other
+normal modes."""
+
+		self.nma_top_group = Pmw.Group(self.nma_page,tag_text='About')
+		self.nma_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+
+		myfont = Pmw.logicalfont(name='Helvetica',size=14)
+		self.text_field = Pmw.ScrolledText(self.nma_top_group.interior(),
+			borderframe=5,
+			vscrollmode='dynamic',
+			hscrollmode='dynamic',
+			labelpos='n',
+			text_width=150, text_height=7,
+			text_wrap='word',
+			text_background='white',
+			text_foreground='black',
+			text_font = myfont)
+			
+		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.insert('end',about_nma)
+		
+		# input files
+		
+		self.trj_file_io = Pmw.Group(self.nma_page, tag_text='Coarse Graining')
+		self.trj_file_io.pack(side = TOP,expand=1, fill='x')
+		
+		
+		# Read PDB file 
+		self.pdb_location = Pmw.EntryField(self.trj_file_io.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'PDB File:',
+												)
+		# coarse grain level
+		self.var = StringVar()
+		self.var.set('4')
+		self.cg_level = Pmw.OptionMenu(self.trj_file_io.interior(),
+				labelpos = 'w',
+				label_text = 'CG Level:',
+				menubutton_textvariable = self.var,
+				items = ['1', '2', '3', '4', '5', '6'],
+				menubutton_width = 10,
+		)
+		#self.cg_level.pack(anchor = 'w', padx = 10, pady = 10)
+		
+		# output directory
+		
+		self.out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
+												labelpos = 'w',
+												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
+												label_text = 'Output Directory:',
+												value = os.getcwd())
+		entries=(self.pdb_location,
+					self.cg_level,
+					self.out_dir_location)
+					
+		for x in entries:
+			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+			
+		# Run coarse garining
+		self.run_cg_button = Pmw.ButtonBox(self.trj_file_io.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_cg_button.add('Run',fg='blue', command = self.run_ipca)
+		self.run_cg_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+			
+		Pmw.alignlabels(entries)	
+		# PCA options
+		# PCA Methods
+		self.ipca_page_main_group = Pmw.Group(self.nma_page, tag_text='Internal PCA Options')
+		self.ipca_page_main_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		
+		## cordinate type
+		self.ct_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Cordinate type:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove')
+		self.ct_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.ct_buttons.add('distance', command = self.ok)
+		self.ct_buttons.add('angle', command = self.ok)
+		self.ct_buttons.add('phi', command = self.ok)
+		self.ct_buttons.add('psi', command = self.ok)
+		
+		self.ct_buttons.invoke('distance')
+		
+		# Atom group 
+		self.atm_grp_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Atom group:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_ag_selection)
+		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.atm_grp_buttons.add('All', command = self.ok)
+		self.atm_grp_buttons.add('CA', command = self.ok)
+		self.atm_grp_buttons.add('Backbone', command = self.ok)
+		self.atm_grp_buttons.add('Protein', command = self.ok)
+		self.atm_grp_buttons.invoke('CA')
+		
+
+		# Number of PCA component
+		self.pca_comp = Pmw.EntryField(self.ipca_page_main_group.interior(),
+                                                labelpos = 'w',
+                                                label_text = 'PCA component:',
+												value='All',
+												command = self.get_pc_selection)
+		self.pca_comp.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		
+		pca_options_buttons=(self.ct_buttons, self.atm_grp_buttons,
+			self.pca_comp)
+		Pmw.alignlabels(pca_options_buttons)
+		
+		# Run button
+		
+		self.run_pca_button = Pmw.ButtonBox(self.ipca_page_main_group.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_pca_button.add('Run Internal PCA',fg='blue', command = self.run_ipca)
+		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		# Exit button
+		
+		self.exit_pca = Pmw.ButtonBox(self.ipca_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
+		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
+		
+		# status bar
+		pca_output='test'
+		self.pca_output_group = Pmw.Group(self.nma_page, tag_text='Results')
+		self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
+                             borderframe=5,
+                             vscrollmode='dynamic',
+                             hscrollmode='dynamic',
+                             labelpos='n',
+                             text_width=150, text_height=4,
+                             text_wrap='word',
+                             text_background='#000000',
+                             text_foreground='white',
+                             text_font = myfont
+                             )
+		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.status_feild.insert('end',pca_output)
+		#sys.stdout = StdoutRedirector(self.status_feild)
+		
+		
 		#---------------------------------------------------------------
         # ABOUT PAGE
 		#=======================================================
@@ -636,6 +793,10 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
 		n = self.trj_location.setvalue(filename)
 		return n
 		
+	def set_pdb_filename(self, filename):
+		n = self.pdb_location.setvalue(filename)
+		return n
+		
 	def get_pc_method_selection(self, sele_option):
 		n=self.pca_methods_buttons.getvalue()
 		return n
@@ -654,6 +815,10 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
 		
 	def get_pc_selection(self, sele_option):
 		n= self.pca_comp.getvalue()
+		return n
+		
+	def get_cg_selection(self, sele_option):
+		n= self.cg_level.getvalue()
 		return n
 
 	def set_top_filename(self, filename):

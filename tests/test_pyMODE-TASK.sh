@@ -2,4 +2,4 @@
 
 cd ..
 
-./pypca.py
+.././pypca.py

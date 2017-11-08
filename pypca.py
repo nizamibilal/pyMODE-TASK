@@ -6,6 +6,7 @@ from Tkinter import *
 import Pmw
 import tkMessageBox, tkFileDialog
 import os
+import webbrowser
 
 
 class App:
@@ -16,6 +17,53 @@ class App:
 		adplugin_font = ("Courier", 14)
 		self.frame = Frame(master, width=2, height=2, bg="red", colormap="new")
 		self.frame.pack()
+		
+		#================================================
+		#
+		# Menu bar
+		#====================
+		# Create the Balloon.
+		self.balloon = Pmw.Balloon(master)
+
+		# Create and pack the MenuBar.
+		self.menuBar = Pmw.MenuBar(master,
+				hotkeys=0,
+				hull_relief = 'raised',
+				hull_borderwidth = 2,
+				balloon = self.balloon)
+		self.menuBar.pack(fill = 'x')
+		#self.menuBar = menuBar
+		
+		# Add File menubar.
+		self.menuBar.addmenu('File', 'Close this window or exit')
+		self.menuBar.addmenuitem('File', 'command', 'About the pyMODE-TASK',
+				label = 'About',
+				command=self.open_help
+				)
+		self.menuBar.addmenuitem('File', 'separator')
+		self.menuBar.addmenuitem('File', 'command', 'Exit the application',
+				label = 'Exit',
+				command=self.frame.quit)
+	
+		# Add Help menubar.
+		
+		self.menuBar.addmenu('Help', 'Help page')
+		self.menuBar.addmenuitem('Help', 'command', label='Help Page',
+			command=self.open_help)
+			
+		self.menuBar.addmenuitem('Help', 'separator')
+		self.menuBar.addmenuitem('Help', 'command', label='PCA Theory',
+			command=self.open_pca_theory)
+		#self.menuBar.addmenuitem('Help', 'separator')
+		self.menuBar.addmenuitem('Help', 'command', label='NMA Theory', 
+			command=self.open_nma_theory)
+			
+		self.menuBar.addmenuitem('Help', 'separator')
+		self.menuBar.addmenuitem('Help', 'command', label='PCA Tutorial',
+			command=self.open_pca_tutorial)
+		#self.menuBar.addmenuitem('Help', 'separator')
+		self.menuBar.addmenuitem('Help', 'command', label='NMA Tutorial',
+			command=self.open_nma_tutorial)
 		
 		
 		# the title
@@ -398,7 +446,7 @@ normal modes."""
 		# input files
 		
 		self.trj_file_io = Pmw.Group(self.nma_page, tag_text='Coarse Graining')
-		self.trj_file_io.pack(side = TOP,expand=1, fill='x')
+		self.trj_file_io.pack(side = LEFT,expand=1, fill='x')
 		
 		
 		# Read PDB file 
@@ -438,80 +486,99 @@ normal modes."""
 			orient='horizontal',
 			padx=0,
 			pady=0)
-		self.run_cg_button.add('Run',fg='blue', command = self.run_ipca)
-		self.run_cg_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		self.run_cg_button.add('Run Coarse Graining',fg='blue', command = self.run_ipca)
+		self.run_cg_button.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 			
-		Pmw.alignlabels(entries)	
-		# PCA options
-		# PCA Methods
-		self.ipca_page_main_group = Pmw.Group(self.nma_page, tag_text='Internal PCA Options')
-		self.ipca_page_main_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		Pmw.alignlabels(entries)
 		
-		## cordinate type
-		self.ct_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
-				buttontype = 'radiobutton',
-				selectmode = 'single',
-				labelpos = 'w',
-				label_text = 'Cordinate type:',
-				frame_borderwidth = 2,
-				frame_relief = 'groove')
-		self.ct_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.ct_buttons.add('distance', command = self.ok)
-		self.ct_buttons.add('angle', command = self.ok)
-		self.ct_buttons.add('phi', command = self.ok)
-		self.ct_buttons.add('psi', command = self.ok)
+		# NMA options
 		
-		self.ct_buttons.invoke('distance')
+		self.nma_group = Pmw.Group(self.nma_page, tag_text='NMA')
+		self.nma_group.pack(side=LEFT, fill = 'x', expand = 1, padx=2, pady=2)
 		
-		# Atom group 
-		self.atm_grp_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
-				buttontype = 'radiobutton',
-				selectmode = 'single',
-				labelpos = 'w',
-				label_text = 'Atom group:',
-				frame_borderwidth = 2,
-				frame_relief = 'groove',
-				command = self.get_ag_selection)
-		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.atm_grp_buttons.add('All', command = self.ok)
-		self.atm_grp_buttons.add('CA', command = self.ok)
-		self.atm_grp_buttons.add('Backbone', command = self.ok)
-		self.atm_grp_buttons.add('Protein', command = self.ok)
-		self.atm_grp_buttons.invoke('CA')
+		# Read PDB file 
+		self.nma_pdb_location = Pmw.EntryField(self.nma_group.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'PDB File:',
+												)
+		self.nma_pdb_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
 		
 
-		# Number of PCA component
-		self.pca_comp = Pmw.EntryField(self.ipca_page_main_group.interior(),
+		# Cutoff in Ang
+		self.nma_cut = Pmw.EntryField(self.nma_group.interior(),
                                                 labelpos = 'w',
-                                                label_text = 'PCA component:',
-												value='All',
+                                                label_text = 'Cutoff (A):',
+												value='15',
 												command = self.get_pc_selection)
-		self.pca_comp.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.nma_cut.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		
+		# output directory
 		
-		pca_options_buttons=(self.ct_buttons, self.atm_grp_buttons,
-			self.pca_comp)
+		self.nma_out_dir_location = Pmw.EntryField(self.nma_group.interior(),
+												labelpos = 'w',
+												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
+												label_text = 'Output Directory:',
+												value = os.getcwd())
+		self.nma_out_dir_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+												
+		pca_options_buttons=(self.nma_pdb_location, 
+			self.nma_cut, 
+			self.nma_out_dir_location)
 		Pmw.alignlabels(pca_options_buttons)
 		
 		# Run button
 		
-		self.run_pca_button = Pmw.ButtonBox(self.ipca_page_main_group.interior(),
+		self.run_pca_button = Pmw.ButtonBox(self.nma_group.interior(),
 			orient='horizontal',
 			padx=0,
 			pady=0)
-		self.run_pca_button.add('Run Internal PCA',fg='blue', command = self.run_ipca)
+		self.run_pca_button.add('Run NMA',fg='blue', command = self.run_ipca)
 		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
+		# Get eigenvectors
+		self.get_eig_group = Pmw.Group(self.nma_page, tag_text='Get Eigenvectors')
+		self.get_eig_group.pack(side=LEFT, fill = 'x', expand = 1, padx=2, pady=2)
+		
+		# read VT file
+		self.nma_vtfile_location = Pmw.EntryField(self.get_eig_group.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'VT value file:',
+												)
+		self.nma_vtfile_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# mode index 
+		
+		self.nma_mode_idx = Pmw.EntryField(self.get_eig_group.interior(),
+												labelpos = 'w',
+												label_text = 'Mode index:',
+												command = self.get_pc_selection)
+		self.nma_mode_idx.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# Direction
+		
+		#self.var1 = StringVar()
+		#self.var1.set('4')
+		self.nma_direction = Pmw.OptionMenu(self.get_eig_group.interior(),
+				labelpos = 'w',
+				label_text = 'Direction:',
+				#menubutton_textvariable = self.var,
+				items = ['1', '-1'],
+				menubutton_width = 10,
+		)
+		self.nma_direction.pack(anchor = 'w', padx = 10, pady = 10)
 		# Exit button
 		
-		self.exit_pca = Pmw.ButtonBox(self.ipca_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_pca = Pmw.ButtonBox(self.nma_group.interior(),orient='horizontal', padx=0,pady=0)
 		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
 		# status bar
 		pca_output='test'
 		self.pca_output_group = Pmw.Group(self.nma_page, tag_text='Results')
-		self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		self.pca_output_group.pack(side=BOTTOM, expand = 1, padx=2, pady=2)
 		self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
                              borderframe=5,
                              vscrollmode='dynamic',
@@ -680,7 +747,21 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
 		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
-
+	def open_help(self):
+		webbrowser.open_new("src/docs/build/html/intro.html")
+		
+	def open_pca_theory(self):
+		webbrowser.open_new("src/docs/build/html/theory.html")
+	
+	def open_nma_theory(self):
+		webbrowser.open_new("src/docs/build/html/theory.html")
+		
+	def open_pca_tutorial(self):
+		webbrowser.open_new("src/docs/build/html/pca_tut.html")
+		
+	def open_nma_tutorial(self):
+		webbrowser.open_new("src/docs/build/html/nma_tut.html")
+		
 	def execute(self):
 		self.about.show()
 		
@@ -1329,7 +1410,7 @@ class StdoutRedirector(IORedirector):
 	'''A class for redirecting stdout to this Text widget.'''
 	def write(self,message):
 		self.text_area.insert("insert", message)
-			
+		
 root = Tk()
 app = App(root)
 root.title("pyMODE-TASK")

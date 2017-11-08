@@ -88,7 +88,7 @@ class App:
 		self.nma_page = self.notebook.add('NMA')
 		self.about_page = self.notebook.add('About')
 		self.citation_page = self.notebook.add('Citation')
-		self.help_page = self.notebook.add('Help')
+		self.help_page = self.notebook.add('Help and Credit')
 		
 		#---------------------------------------------------------------
         # 							PCA PAGE
@@ -115,6 +115,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',about_pca)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -268,8 +269,8 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
                              text_font = myfont
                              )
 		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-		#pca_output=self.run_pca
 		self.status_feild.insert('end',pca_output)
+		self.status_feild.configure(text_state=DISABLED)
 		
 		#============================================================
 		#
@@ -297,6 +298,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',about_pca)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -413,6 +415,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
                              )
 		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.status_feild.insert('end',pca_output)
+		self.text_field.configure(text_state=DISABLED)
 		#sys.stdout = StdoutRedirector(self.status_feild)
 		
 		#==============================================================
@@ -442,6 +445,7 @@ normal modes."""
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',about_nma)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -592,6 +596,7 @@ normal modes."""
                              )
 		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.status_feild.insert('end',pca_output)
+		self.text_field.configure(text_state=DISABLED)
 		#sys.stdout = StdoutRedirector(self.status_feild)
 		
 		
@@ -638,6 +643,7 @@ email: nizamibilal1064@gmail.com"""
                              )
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',about_pca)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# Exit button
 		
@@ -690,6 +696,7 @@ email: nizamibilal1064@gmail.com"""
                              )
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',citation)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# Exit button
 		
@@ -704,10 +711,22 @@ email: nizamibilal1064@gmail.com"""
 		help = """
 See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/index.html
 
+
+Credit:
+
+1. Bilal Nizami - plugin design and implementaion, PCA implementaion
+
+2. Caroline Ross - NMA implementaion
+
+3. Ozlem Tastan Bishop - Design, idea and principle investigator
+
+Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Africa
+
+
 """
 		link = '''Read the doc'''
 		
-		self.help_top_group = Pmw.Group(self.help_page,tag_text='Help')
+		self.help_top_group = Pmw.Group(self.help_page,tag_text='Help and Credit')
 		self.help_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 		
 		myfont = Pmw.logicalfont(name='Courier',size=14, spacing='2')
@@ -716,7 +735,7 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
                              vscrollmode='dynamic',
                              hscrollmode='dynamic',
                              labelpos='n',
-                             text_width=150, text_height=3,
+                             text_width=150, text_height=13,
                              text_wrap='word',
                              text_background='White',
                              text_foreground='Black',
@@ -724,10 +743,11 @@ See the help page of MODE-TASK at   http://mode-task.readthedocs.io/en/latest/in
                              )
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',help)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# Create dialog.
 		Pmw.aboutversion('1.0')
-		Pmw.aboutcopyright('Copyright Bilal Nizami 2017\nAll rights reserved')
+		Pmw.aboutcopyright('Copyright Bilal Nizami 2017\nAll rights reserved\n The project is licensed under GNU GPL 3.0')
 		Pmw.aboutcontact(
             'To report bug, for help and suggestion contact:\n' +
             '  email: nizamibilal1064@gmail'

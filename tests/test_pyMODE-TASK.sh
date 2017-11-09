@@ -2,4 +2,5 @@
 
 cd ..
 pwd
+ls
 ./pypca.py

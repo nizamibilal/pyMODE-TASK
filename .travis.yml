@@ -32,4 +32,5 @@ install:
   - cd ../..
 
 script: 
+  - ls
   - ./tests/test_pyMODE-TASK.sh

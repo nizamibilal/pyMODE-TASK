@@ -119,37 +119,37 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		
 		# input files
 		
-		self.trj_file_io = Pmw.Group(self.pca_page, tag_text='MODE-TASK Input/Output')
-		self.trj_file_io.pack(side = TOP,expand=1, fill='x')
+		self.pca_trj_file_io = Pmw.Group(self.pca_page, tag_text='MODE-TASK Input/Output')
+		self.pca_trj_file_io.pack(side = TOP,expand=1, fill='x')
 		
 		
 		# Read Trajectory 
-		self.trj_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.pca_trj_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
 												labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
 		# Read Topology 						
-		self.top_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.pca_top_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
                                                 labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
                                                 label_text = 'Topology File:')
 		# RMSD Reference Structure
 		
-		self.ref_file = Pmw.EntryField(self.trj_file_io.interior(),
+		self.pca_ref_file = Pmw.EntryField(self.pca_trj_file_io.interior(),
                                                 labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_ref_filename,mode='r',filter=[("PDB",".pdb"), ("All","*.*")]),                                                
                                                 label_text = 'Ref Structure/Frame:')
 		# output directory
 		
-		self.out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.out_dir_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
 												labelpos = 'w',
 												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
-		entries=(self.trj_location,
-					self.top_location,
-					self.ref_file,
+		entries=(self.pca_trj_location,
+					self.pca_top_location,
+					self.pca_ref_file,
 					self.out_dir_location)
 					
 		for x in entries:
@@ -302,31 +302,31 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		
 		# input files
 		
-		self.trj_file_io = Pmw.Group(self.ipca_page, tag_text='MODE-TASK Input/Output')
-		self.trj_file_io.pack(side = TOP,expand=1, fill='x')
+		self.icpca_trj_file_io = Pmw.Group(self.ipca_page, tag_text='MODE-TASK Input/Output')
+		self.icpca_trj_file_io.pack(side = TOP,expand=1, fill='x')
 		
 		
 		# Read Trajectory 
-		self.trj_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.ipca_trj_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
 												labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
 		# Read Topology 						
-		self.top_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.ipca_top_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
                                                 labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
                                                 label_text = 'Topology File:')
 		# output directory
 		
-		self.out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.pca_out_dir_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
 												labelpos = 'w',
 												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
-		entries=(self.trj_location,
-					self.top_location,
-					self.out_dir_location)
+		entries=(self.ipca_trj_location,
+					self.ipca_top_location,
+					self.pca_out_dir_location)
 					
 		for x in entries:
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -857,22 +857,32 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 	
 	def run_pca(self):
 		cmd_dir = './src'
-		trj_loc = self.trj_location.getvalue()
-		top_loc = self.top_location.getvalue()
+		trj_loc = self.pca_trj_location.getvalue()
+		top_loc = self.pca_top_location.getvalue()
 		pc_sele = self.pca_methods_buttons.getvalue()
 		st_sele = self.svd_solver_type.getvalue()
 		kt_sele = self.kernel_type.getvalue()
 		ag_sele = self.atm_grp_buttons.getvalue()
 		pc_comp = self.pca_comp.getvalue()
-		out_loc = self.out_dir_location.getvalue()
-		ref_loc = self.ref_file.getvalue()
+		out_loc = self.pca_out_dir_location.getvalue()
+		ref_loc = self.pca_ref_file.getvalue()
+		if trj_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
 		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
-		cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
+		if top_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+		else:
+			if ref_loc != '':
+				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
+			else:				
+				tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
+				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
 		#print os.system(cmd)
-		out = `os.system(cmd)` 
-		return out
+			out = `os.system(cmd)` 
+			tkMessageBox.showinfo("pyMODE-TASK!", "PCA run successful!\nResults are written in Output Directory!")
+			return out
 		#pca_output = os.system(cmd)
-		#return pca_output
+		#return pca_outputd
 		
 	def run_ipca(self):
 		cmd_dir = './src'
@@ -891,7 +901,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		#return pca_output
 		
 	def set_trj_filename(self, filename):
-		n = self.trj_location.setvalue(filename)
+		n = self.pca_trj_location.setvalue(filename)
 		return n
 		
 	def set_pdb_filename(self, filename):
@@ -923,13 +933,13 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		return n
 
 	def set_top_filename(self, filename):
-		self.top_location.setvalue(filename)
+		self.pca_top_location.setvalue(filename)
 		
 	def set_ref_filename(self, filename):
-		self.ref_file.setvalue(filename)
+		self.pca_ref_file.setvalue(filename)
 		
 	def set_out_location(self, dirname):
-		self.out_dir_location.setvalue(dirname)
+		self.pca_out_dir_location.setvalue(dirname)
 				
 	def about(self):
 		print "pyMODE-TASK!\n pymol plugin of MODE-TASK\n MODE-TASK: a software tool to perform PCA and NMA of protein structure and MD trajectories"

@@ -3,6 +3,8 @@
 
 #import Tkinter as Tk
 from Tkinter import *
+#from Tkinter import ttk
+import ttk
 import Pmw
 import tkMessageBox, tkFileDialog
 import os
@@ -15,7 +17,7 @@ class App:
 		
 		
 		adplugin_font = ("Courier", 14)
-		self.frame = Frame(master, width=2, height=2, bg="red", colormap="new")
+		self.frame = Frame(master, width=4, height=4, bg="red3", colormap="new")
 		self.frame.pack()
 		
 		#================================================
@@ -26,6 +28,7 @@ class App:
 		self.dialog1 = Pmw.MessageDialog(master,
 			title = 'pyMODE-TASK',
 			message_text = 'A pymol plugin for MODE-TASK\n\n'+
+				'Version 1.0\n\n\n'+
 				'MODE-TASK is a open source collection of tools to perform the\n'+
 				'Priciple component analysis (PCA), MDS and t-SNE on a protein MD trajectory,\n' +
 				'and Normal mode analyses (NMA) on protein 3D structure.\n'+
@@ -36,6 +39,8 @@ class App:
 			buttons = ('OK', 'Close'),
 			defaultbutton = 'Close')
 		self.dialog1.iconname('pyMODE-TASK')
+		widget = self.dialog1.component('hull')
+		Pmw.Color.changecolor(widget, background = 'tan1')
 		self.dialog1.withdraw()
 		# Create the Balloon.
 		self.balloon = Pmw.Balloon(master)
@@ -82,17 +87,20 @@ class App:
 		
 		
 		# the title
+	
 		self.title_label = Label(self.frame, text = 'pyMODE-TASK: A MODE-TASK Plugin for pymol -- Bilal Nizami, RUBi, Rhodes University',
-				background = 'navy',
-				foreground = 'white', 
+				background = 'olivedrab1',
+				foreground = 'black', 
 				height=1, 
-				width=900,
+				width=880,
 				font=('Arial', 11))
 		self.title_label.pack(expand = 0, fill = 'both', padx = 1, pady = 1)
 		
 		# the basic notebook
 
 		self.notebook = Pmw.NoteBook(master)
+		Pmw.Color.changecolor(master, background='gray70', foreground='black')
+		self.notebook.recolorborders()
 		self.notebook.pack(fill='both',expand=1,padx=13,pady=13)
 
 
@@ -125,7 +133,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 			labelpos='n',
 			text_width=150, text_height=4,
 			text_wrap='word',
-			text_background='white',
+			text_background='deepskyblue2',
 			text_foreground='black',
 			text_font = myfont)
 			
@@ -270,6 +278,15 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
 		# status bar
+		#self.bytes = 0
+		#self.maxbytes = 0
+		#self.progress["value"] = 0
+		#self.maxbytes = 50000
+		#self.progress["maximum"] = 50000
+		self.progress = ttk.Progressbar(self.pca_page_main_group.interior(), orient="horizontal",
+										length=200, mode="indeterminate")
+		self.progress.pack()
+		
 		pca_output='test'
 		self.pca_output_group = Pmw.Group(self.pca_page, tag_text='Results')
 		self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
@@ -308,7 +325,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			labelpos='n',
 			text_width=150, text_height=4,
 			text_wrap='word',
-			text_background='white',
+			text_background='deepskyblue2',
 			text_foreground='black',
 			text_font = myfont)
 			
@@ -455,7 +472,7 @@ normal modes."""
 			labelpos='n',
 			text_width=150, text_height=7,
 			text_wrap='word',
-			text_background='white',
+			text_background='deepskyblue2',
 			text_foreground='black',
 			text_font = myfont)
 			
@@ -653,7 +670,7 @@ email: nizamibilal1064@gmail.com"""
                              labelpos='n',
                              text_width=150, text_height=40,
                              text_wrap='word',
-                             text_background='White',
+                             text_background='deepskyblue2',
                              text_foreground='Black',
                              text_font = myfont
                              )
@@ -706,7 +723,7 @@ email: nizamibilal1064@gmail.com"""
                              labelpos='n',
                              text_width=150, text_height=40,
                              text_wrap='word',
-                             text_background='White',
+                             text_background='deepskyblue2',
                              text_foreground='Black',
                              text_font = myfont
                              )
@@ -753,7 +770,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
                              labelpos='n',
                              text_width=150, text_height=13,
                              text_wrap='word',
-                             text_background='White',
+                             text_background='deepskyblue2',
                              text_foreground='Black',
                              text_font = myfont
                              )
@@ -890,6 +907,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		else:
 			if ref_loc != '':
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
+				#self.progress["maximum"] = 50000
 			else:				
 				tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc

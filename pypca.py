@@ -22,6 +22,21 @@ class App:
 		#
 		# Menu bar
 		#====================
+		# Create about dialog.
+		self.dialog1 = Pmw.MessageDialog(master,
+			title = 'pyMODE-TASK',
+			message_text = 'A pymol plugin for MODE-TASK\n\n'+
+				'MODE-TASK is a open source collection of tools to perform the\n'+
+				'Priciple component analysis (PCA), MDS and t-SNE on a protein MD trajectory,\n' +
+				'and Normal mode analyses (NMA) on protein 3D structure.\n'+
+				'pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.\n',
+			buttonboxpos = 's',
+			#iconpos = 'n',
+			#icon_bitmap = (r'@py.ico'),
+			buttons = ('OK', 'Close'),
+			defaultbutton = 'Close')
+		self.dialog1.iconname('pyMODE-TASK')
+		self.dialog1.withdraw()
 		# Create the Balloon.
 		self.balloon = Pmw.Balloon(master)
 
@@ -38,7 +53,7 @@ class App:
 		self.menuBar.addmenu('File', 'Close this window or exit')
 		self.menuBar.addmenuitem('File', 'command', 'About the pyMODE-TASK',
 				label = 'About',
-				command=self.open_help
+				command=self.dialog1.activate
 				)
 		self.menuBar.addmenuitem('File', 'separator')
 		self.menuBar.addmenuitem('File', 'command', 'Exit the application',
@@ -85,6 +100,7 @@ class App:
         # build pages
 		self.pca_page = self.notebook.add('PCA')
 		self.ipca_page = self.notebook.add('Internal PCA')
+		self.mds_page = self.notebook.add('MDS/t-SNE')
 		self.nma_page = self.notebook.add('NMA')
 		self.about_page = self.notebook.add('About')
 		self.citation_page = self.notebook.add('Citation')
@@ -126,7 +142,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		# Read Trajectory 
 		self.pca_trj_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
+												label_pyclass = FileDialogButtonClassFactory.get(self.pca_set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
 		# Read Topology 						
@@ -142,15 +158,15 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
                                                 label_text = 'Ref Structure/Frame:')
 		# output directory
 		
-		self.out_dir_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
+		self.pca_out_dir_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
+												label_pyclass = DirDialogButtonClassFactory.get(self.pca_set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
 		entries=(self.pca_trj_location,
 					self.pca_top_location,
 					self.pca_ref_file,
-					self.out_dir_location)
+					self.pca_out_dir_location)
 					
 		for x in entries:
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -309,24 +325,24 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		# Read Trajectory 
 		self.ipca_trj_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
+												label_pyclass = FileDialogButtonClassFactory.get(self.ipca_set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
 		# Read Topology 						
 		self.ipca_top_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
                                                 labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
+												label_pyclass = FileDialogButtonClassFactory.get(self.ipca_set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
                                                 label_text = 'Topology File:')
 		# output directory
 		
-		self.pca_out_dir_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
+		self.ipca_out_dir_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
+												label_pyclass = DirDialogButtonClassFactory.get(self.ipca_set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
 		entries=(self.ipca_trj_location,
 					self.ipca_top_location,
-					self.pca_out_dir_location)
+					self.ipca_out_dir_location)
 					
 		for x in entries:
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -473,14 +489,14 @@ normal modes."""
 		
 		# output directory
 		
-		self.out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.nma_out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
+												label_pyclass = DirDialogButtonClassFactory.get(self.nma_set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
 		entries=(self.pdb_location,
 					self.cg_level,
-					self.out_dir_location)
+					self.nma_out_dir_location)
 					
 		for x in entries:
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -522,7 +538,7 @@ normal modes."""
 		
 		self.nma_out_dir_location = Pmw.EntryField(self.nma_group.interior(),
 												labelpos = 'w',
-												label_pyclass = DirDialogButtonClassFactory.get(self.set_out_location),
+												label_pyclass = DirDialogButtonClassFactory.get(self.nma_set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
 		self.nma_out_dir_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -900,8 +916,12 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		#pca_output = os.system(cmd)
 		#return pca_output
 		
-	def set_trj_filename(self, filename):
+	def pca_set_trj_filename(self, filename):
 		n = self.pca_trj_location.setvalue(filename)
+		return n
+		
+	def ipca_set_trj_filename(self, filename):
+		n = self.ipca_trj_location.setvalue(filename)
 		return n
 		
 	def set_pdb_filename(self, filename):
@@ -934,12 +954,21 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 
 	def set_top_filename(self, filename):
 		self.pca_top_location.setvalue(filename)
+	
+	def ipca_set_top_filename(self, filename):
+		self.ipca_top_location.setvalue(filename)
 		
 	def set_ref_filename(self, filename):
 		self.pca_ref_file.setvalue(filename)
 		
-	def set_out_location(self, dirname):
+	def pca_set_out_location(self, dirname):
 		self.pca_out_dir_location.setvalue(dirname)
+	
+	def ipca_set_out_location(self, dirname):
+		self.ipca_out_dir_location.setvalue(dirname)
+	
+	def nma_set_out_location(self, dirname):
+		self.nma_out_dir_location.setvalue(dirname)
 				
 	def about(self):
 		print "pyMODE-TASK!\n pymol plugin of MODE-TASK\n MODE-TASK: a software tool to perform PCA and NMA of protein structure and MD trajectories"
@@ -1440,7 +1469,7 @@ class StdoutRedirector(IORedirector):
 	'''A class for redirecting stdout to this Text widget.'''
 	def write(self,message):
 		self.text_area.insert("insert", message)
-		
+	
 root = Tk()
 app = App(root)
 root.title("pyMODE-TASK")

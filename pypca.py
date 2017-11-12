@@ -449,6 +449,172 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		self.text_field.configure(text_state=DISABLED)
 		#sys.stdout = StdoutRedirector(self.status_feild)
 		
+		
+		##============================================================
+		# MDS/ t-SNE page
+		#
+		#==============================================================
+		
+		about_mds = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
+To perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory."""		
+		self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
+		self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+
+		myfont = Pmw.logicalfont(name='Helvetica',size=14)
+		self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
+			borderframe=5,
+			vscrollmode='dynamic',
+			hscrollmode='dynamic',
+			labelpos='n',
+			text_width=150, text_height=4,
+			text_wrap='word',
+			text_background='deepskyblue2',
+			text_foreground='black',
+			text_font = myfont)
+			
+		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.insert('end',about_mds)
+		self.text_field.configure(text_state=DISABLED)
+		
+		# input files
+		
+		self.mds_trj_file_io = Pmw.Group(self.mds_page, tag_text='MDS, t-SNE Input/Output')
+		self.mds_trj_file_io.pack(side = TOP,expand=1, fill='both', padx = 4, pady = 4)
+		
+		
+		# Read Trajectory 
+		self.mds_trj_location = Pmw.EntryField(self.mds_trj_file_io.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.mds_set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
+												label_text = 'Trajectory File:',
+												)
+		# Read Topology 						
+		self.mds_top_location = Pmw.EntryField(self.mds_trj_file_io.interior(),
+                                                labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.mds_set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
+                                                label_text = 'Topology File:')
+	
+		# output directory
+		
+		self.mds_out_dir_location = Pmw.EntryField(self.mds_trj_file_io.interior(),
+												labelpos = 'w',
+												label_pyclass = DirDialogButtonClassFactory.get(self.mds_set_out_location),
+												label_text = 'Output Directory:',
+												value = os.getcwd())
+		entries=(self.mds_trj_location,
+					self.mds_top_location,
+					self.mds_out_dir_location)
+					
+		for x in entries:
+			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+			
+		Pmw.alignlabels(entries)	
+		
+		# MDS options
+		# MDS Type
+		self.mds_page_main_group = Pmw.Group(self.mds_page, tag_text='MDS Options')
+		self.mds_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
+		
+		self.mds_type_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'PCA Method:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_mds_type_selection)
+		self.mds_type_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.mds_type_buttons.add('mteric', command = self.ok)
+		self.mds_type_buttons.add('nonmetric', command = self.ok)
+	
+		
+		self.mds_type_buttons.invoke('mteric')
+		
+		# Atom group 
+		self.atm_grp_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Atom group:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_ag_selection)
+		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.atm_grp_buttons.add('All', command = self.ok)
+		self.atm_grp_buttons.add('CA', command = self.ok)
+		self.atm_grp_buttons.add('Backbone', command = self.ok)
+		self.atm_grp_buttons.add('Protein', command = self.ok)
+		self.atm_grp_buttons.invoke('CA')
+		
+		# Dissimilarity Type
+		self.mds_dissimilarity_type = Pmw.RadioSelect(self.mds_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Dissimilarity type:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_mds_dissimilarity_type)
+		self.mds_dissimilarity_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.mds_dissimilarity_type.add('Euclidean distance', command = self.ok)
+		self.mds_dissimilarity_type.add('RSMD', command = self.ok)
+		self.mds_dissimilarity_type.invoke('RSMD')
+		
+		# Cordinate Type
+		self.mds_cord_type = Pmw.RadioSelect(self.mds_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Cordinate Type:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_mds_cord_type
+				)
+		self.mds_cord_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.mds_cord_type.add('distance', command = self.ok)
+		self.mds_cord_type.add('phi', command = self.ok)
+		self.mds_cord_type.add('psi', command = self.ok)
+		self.mds_cord_type.add('angle', command = self.ok)
+		
+		self.mds_cord_type.invoke('distance')
+		#print self.svd_solver_type.getvalue()
+		
+		# Atom Indices 
+		self.atm_ind_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Atom indices:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_ag_selection)
+		self.atm_ind_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.atm_ind_buttons.add('All', command = self.ok)
+		self.atm_ind_buttons.add('CA', command = self.ok)
+		self.atm_ind_buttons.add('Backbone', command = self.ok)
+		self.atm_ind_buttons.add('Protein', command = self.ok)
+		self.atm_ind_buttons.invoke('CA')
+		mds_options_buttons=(self.mds_type_buttons, 
+			self.atm_grp_buttons,  
+			self.mds_dissimilarity_type, 
+			self.mds_cord_type,
+			self.atm_ind_buttons)
+		Pmw.alignlabels(mds_options_buttons)
+		
+		# Run MDS button
+		
+		self.run_mds_button = Pmw.ButtonBox(self.mds_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.run_mds_button.add('Run MDS',fg='blue', command = self.run_pca)
+		self.run_mds_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		# Exit button
+		
+		self.exit_mds = Pmw.ButtonBox(self.mds_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_mds.add('EXIT', fg='red', command = self.frame.quit)
+		self.exit_mds.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
+		
+		
+		
 		#==============================================================
         # NMA PAGE
 		#==============================================================
@@ -955,6 +1121,10 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		n = self.pca_trj_location.setvalue(filename)
 		return n
 		
+	def mds_set_trj_filename(self, filename):
+		n = self.mds_trj_location.setvalue(filename)
+		return n
+		
 	def ipca_set_trj_filename(self, filename):
 		n = self.ipca_trj_location.setvalue(filename)
 		return n
@@ -965,6 +1135,10 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		
 	def get_pc_method_selection(self, sele_option):
 		n=self.pca_methods_buttons.getvalue()
+		return n
+		
+	def get_mds_type_selection(self, sele_option):
+		n=self.mds_type_buttons.getvalue()
 		return n
 
 	def get_st_selection(self, sele_option):
@@ -992,6 +1166,9 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 	
 	def ipca_set_top_filename(self, filename):
 		self.ipca_top_location.setvalue(filename)
+	
+	def mds_set_top_filename(self, filename):
+		self.mds_top_location.setvalue(filename)
 		
 	def set_ref_filename(self, filename):
 		self.pca_ref_file.setvalue(filename)
@@ -1002,9 +1179,20 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 	def ipca_set_out_location(self, dirname):
 		self.ipca_out_dir_location.setvalue(dirname)
 	
+	def mds_set_out_location(self, dirname):
+		self.mds_out_dir_location.setvalue(dirname)
+	
 	def nma_set_out_location(self, dirname):
 		self.nma_out_dir_location.setvalue(dirname)
-				
+	
+	def get_mds_dissimilarity_type(self, sele_option):
+		n= self.mds_dissimilarity_type.getvalue()
+		return n
+		
+	def get_mds_cord_type(self, sele_option):
+		n=self.mds_cord_type.getvalue()
+		return n
+		
 	def about(self):
 		print "pyMODE-TASK!\n pymol plugin of MODE-TASK\n MODE-TASK: a software tool to perform PCA and NMA of protein structure and MD trajectories"
 

@@ -455,26 +455,25 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		#
 		#==============================================================
 		
-		about_mds = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
-To perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory."""		
-		self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
-		self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
-
-		myfont = Pmw.logicalfont(name='Helvetica',size=14)
-		self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
-			borderframe=5,
-			vscrollmode='dynamic',
-			hscrollmode='dynamic',
-			labelpos='n',
-			text_width=150, text_height=4,
-			text_wrap='word',
-			text_background='deepskyblue2',
-			text_foreground='black',
-			text_font = myfont)
-			
-		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-		self.text_field.insert('end',about_mds)
-		self.text_field.configure(text_state=DISABLED)
+		#about_mds = """To perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory."""		
+		#self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
+		#self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+        #
+		#myfont = Pmw.logicalfont(name='Helvetica',size=14)
+		#self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
+		#	borderframe=5,
+		#	vscrollmode='dynamic',
+		#	hscrollmode='dynamic',
+		#	labelpos='n',
+		#	text_width=150, text_height=1,
+		#	text_wrap='word',
+		#	text_background='deepskyblue2',
+		#	text_foreground='black',
+		#	text_font = myfont)
+		#	
+		#self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 1)
+		#self.text_field.insert('end',about_mds)
+		#self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -512,9 +511,14 @@ To perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD traject
 		
 		# MDS options
 		# MDS Type
-		self.mds_page_main_group = Pmw.Group(self.mds_page, tag_text='MDS Options')
+		self.radioframe = Frame(self.mds_page)
+		radiogroups = []
+		
+		self.mds_page_main_group = Pmw.Group(self.radioframe, tag_text='MDS Options')
+		#self.mds_page_main_group.groupchildsite(tag_text='MDS Options')
 		self.mds_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
 		
+		radiogroups.append(self.mds_page_main_group)
 		self.mds_type_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
 				buttontype = 'radiobutton',
 				selectmode = 'single',
@@ -610,6 +614,102 @@ To perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD traject
 		# Exit button
 		
 		self.exit_mds = Pmw.ButtonBox(self.mds_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_mds.add('EXIT', fg='red', command = self.frame.quit)
+		self.exit_mds.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
+		
+		##=========================================
+		# t-SNE options
+		
+		# t-SNE options
+		
+		self.tsne_page_main_group = Pmw.Group(self.radioframe, tag_text='t-SNE Options')
+		self.tsne_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
+		
+		radiogroups.append(self.tsne_page_main_group)
+
+		Pmw.aligngrouptags(radiogroups,)
+		self.radioframe.pack(padx = 6, pady = 6, expand='yes', fill='both')
+		
+		# Atom group 
+		self.atm_grp_buttons = Pmw.RadioSelect(self.tsne_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Atom group:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_ag_selection)
+		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.atm_grp_buttons.add('All', command = self.ok)
+		self.atm_grp_buttons.add('CA', command = self.ok)
+		self.atm_grp_buttons.add('Backbone', command = self.ok)
+		self.atm_grp_buttons.add('Protein', command = self.ok)
+		self.atm_grp_buttons.invoke('CA')
+		
+		# Dissimilarity Type
+		self.tsne_dissimilarity_type = Pmw.RadioSelect(self.tsne_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Dissimilarity type:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_mds_dissimilarity_type)
+		self.tsne_dissimilarity_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.tsne_dissimilarity_type.add('Euclidean distance', command = self.ok)
+		self.tsne_dissimilarity_type.add('RSMD', command = self.ok)
+		self.tsne_dissimilarity_type.invoke('RSMD')
+		
+		# Cordinate Type
+		self.tsne_cord_type = Pmw.RadioSelect(self.tsne_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Cordinate Type:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_mds_cord_type
+				)
+		self.tsne_cord_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.tsne_cord_type.add('distance', command = self.ok)
+		self.tsne_cord_type.add('phi', command = self.ok)
+		self.tsne_cord_type.add('psi', command = self.ok)
+		self.tsne_cord_type.add('angle', command = self.ok)
+		
+		self.tsne_cord_type.invoke('distance')
+		#print self.svd_solver_type.getvalue()
+		
+		# Atom Indices 
+		self.atm_ind_buttons = Pmw.RadioSelect(self.tsne_page_main_group.interior(),
+				buttontype = 'radiobutton',
+				selectmode = 'single',
+				labelpos = 'w',
+				label_text = 'Atom indices:',
+				frame_borderwidth = 2,
+				frame_relief = 'groove',
+				command = self.get_ag_selection)
+		self.atm_ind_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.atm_ind_buttons.add('All', command = self.ok)
+		self.atm_ind_buttons.add('CA', command = self.ok)
+		self.atm_ind_buttons.add('Backbone', command = self.ok)
+		self.atm_ind_buttons.add('Protein', command = self.ok)
+		self.atm_ind_buttons.invoke('CA')
+		mds_options_buttons=(self.mds_type_buttons, 
+			self.atm_grp_buttons,  
+			self.tsne_dissimilarity_type, 
+			self.tsne_cord_type,
+			self.atm_ind_buttons)
+		Pmw.alignlabels(mds_options_buttons)
+		
+		# Run t-SNE button
+		
+		self.run_mds_button = Pmw.ButtonBox(self.tsne_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.run_mds_button.add('Run t-SNE',fg='blue', command = self.run_pca)
+		self.run_mds_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		# Exit button
+		
+		self.exit_mds = Pmw.ButtonBox(self.tsne_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
 		self.exit_mds.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_mds.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		

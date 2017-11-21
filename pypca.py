@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #filename: pypca.py
-
+import matplotlib
+matplotlib.use('Agg')
 #import Tkinter as Tk
 from Tkinter import *
 import subprocess
@@ -41,7 +42,7 @@ class App:
 			defaultbutton = 'Close')
 		self.dialog1.iconname('pyMODE-TASK')
 		widget = self.dialog1.component('hull')
-		Pmw.Color.changecolor(widget, background = 'tan1')
+		Pmw.Color.changecolor(widget, background = 'brown4', foreground='white')
 		self.dialog1.withdraw()
 		# Create the Balloon.
 		self.balloon = Pmw.Balloon(master)
@@ -90,8 +91,8 @@ class App:
 		# the title
 	
 		self.title_label = Label(self.frame, text = 'pyMODE-TASK: A MODE-TASK Plugin for pymol -- Bilal Nizami, RUBi, Rhodes University',
-				background = 'olivedrab1',
-				foreground = 'black', 
+				background = 'brown4',
+				foreground = 'white', 
 				height=1, 
 				width=880,
 				font=('Arial', 11))
@@ -134,8 +135,8 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 			labelpos='n',
 			text_width=150, text_height=4,
 			text_wrap='word',
-			text_background='deepskyblue2',
-			text_foreground='black',
+			text_background='skyblue4',
+			text_foreground='white',
 			text_font = myfont)
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -269,7 +270,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		# Run button
 		
 		self.run_pca_button = Pmw.ButtonBox(self.pca_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
-		self.run_pca_button.add('Run PCA',fg='blue', command = self.run_pca)
+		self.run_pca_button.add('Run PCA',fg='green4', command = self.run_pca)
 		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
 		# Exit button
@@ -323,8 +324,8 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			labelpos='n',
 			text_width=150, text_height=4,
 			text_wrap='word',
-			text_background='deepskyblue2',
-			text_foreground='black',
+			text_background='skyblue4',
+			text_foreground='white',
 			text_font = myfont)
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -736,8 +737,8 @@ normal modes."""
 			labelpos='n',
 			text_width=150, text_height=7,
 			text_wrap='word',
-			text_background='deepskyblue2',
-			text_foreground='black',
+			text_background='skyblue4',
+			text_foreground='white',
 			text_font = myfont)
 			
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -934,8 +935,8 @@ email: nizamibilal1064@gmail.com"""
                              labelpos='n',
                              text_width=150, text_height=40,
                              text_wrap='word',
-                             text_background='deepskyblue2',
-                             text_foreground='Black',
+                             text_background='skyblue4',
+                             text_foreground='white',
                              text_font = myfont
                              )
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -987,8 +988,8 @@ email: nizamibilal1064@gmail.com"""
                              labelpos='n',
                              text_width=150, text_height=40,
                              text_wrap='word',
-                             text_background='deepskyblue2',
-                             text_foreground='Black',
+                             text_background='skyblue4',
+                             text_foreground='white',
                              text_font = myfont
                              )
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -1034,8 +1035,8 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
                              labelpos='n',
                              text_width=150, text_height=13,
                              text_wrap='word',
-                             text_background='deepskyblue2',
-                             text_foreground='Black',
+                             text_background='skyblue4',
+                             text_foreground='white',
                              text_font = myfont
                              )
 		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
@@ -1792,7 +1793,7 @@ class StdoutRedirector(IORedirector):
 	'''A class for redirecting stdout to this Text widget.'''
 	def write(self,message):
 		self.text_area.insert("insert", message)
-	
+		
 root = Tk()
 app = App(root)
 root.title("pyMODE-TASK")

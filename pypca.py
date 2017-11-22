@@ -5,6 +5,7 @@ matplotlib.use('Agg')
 #import Tkinter as Tk
 from Tkinter import *
 import subprocess
+from ttk import Separator, Style
 #from Tkinter import ttk
 import ttk
 import Pmw
@@ -720,35 +721,35 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
         # NMA PAGE
 		#==============================================================
 		
-		about_nma = """NMA analyses the oscillations of a structure. For proteins, it is useful
-for studying the large amplitude motions for a selected conformation. The main assumption
-is that the motions are harmonic. Thus, each normal mode, which is a concerted motion of 
-many atoms, acts as a simple harmonic oscillator, and it is independent of all the other
+		about_nma = """NMA analyses the oscillations of a structure. For proteins, it is useful for studying the large amplitude motions for a selected conformation. The main assumption
+is that the motions are harmonic. Thus, each normal mode, which is a concerted motion of many atoms, acts as a simple harmonic oscillator, and it is independent of all the other
 normal modes."""
 
 		self.nma_top_group = Pmw.Group(self.nma_page,tag_text='About')
-		self.nma_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
-
+		self.nma_top_group.pack(fill = 'both', expand = 1, padx = 2, pady = 2)
+				
 		myfont = Pmw.logicalfont(name='Helvetica',size=14)
 		self.text_field = Pmw.ScrolledText(self.nma_top_group.interior(),
 			borderframe=5,
 			vscrollmode='dynamic',
 			hscrollmode='dynamic',
 			labelpos='n',
-			text_width=150, text_height=7,
+			text_width=250, text_height=4,
 			text_wrap='word',
 			text_background='skyblue4',
 			text_foreground='white',
 			text_font = myfont)
 			
-		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.pack(expand = 1, fill = 'both', padx = 2, pady = 2)
 		self.text_field.insert('end',about_nma)
 		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
-		
-		self.trj_file_io = Pmw.Group(self.nma_page, tag_text='Coarse Graining')
-		self.trj_file_io.pack(side = LEFT,expand=1, fill='x')
+		self.nma_top_group1 = Pmw.Group(self.nma_page, tag_pyclass = None)
+		self.nma_top_group1.pack(fill = 'both', expand = 1, padx = 2, pady = 2)
+
+		self.trj_file_io = Pmw.Group(self.nma_top_group1.interior(), tag_text='Coarse Graining (1)')
+		self.trj_file_io.pack(expand=1, fill='both', side=LEFT)
 		
 		
 		# Read PDB file 
@@ -795,8 +796,8 @@ normal modes."""
 		
 		# NMA options
 		
-		self.nma_group = Pmw.Group(self.nma_page, tag_text='NMA')
-		self.nma_group.pack(side=LEFT, fill = 'x', expand = 1, padx=2, pady=2)
+		self.nma_group = Pmw.Group(self.nma_top_group1.interior(), tag_text='NMA (2)')
+		self.nma_group.pack(expand=1, fill='both', side=LEFT)
 		
 		# Read PDB file 
 		self.nma_pdb_location = Pmw.EntryField(self.nma_group.interior(),
@@ -839,9 +840,10 @@ normal modes."""
 		self.run_pca_button.add('Run NMA',fg='blue', command = self.run_ipca)
 		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
+		#===============================================
 		# Get eigenvectors
-		self.get_eig_group = Pmw.Group(self.nma_page, tag_text='Get Eigenvectors')
-		self.get_eig_group.pack(side=LEFT, fill = 'x', expand = 1, padx=2, pady=2)
+		self.get_eig_group = Pmw.Group(self.nma_top_group1.interior(), tag_text='Get Eigenvectors (3)')
+		self.get_eig_group.pack(expand=1, fill='both', side=LEFT)
 		
 		# read VT file
 		self.nma_vtfile_location = Pmw.EntryField(self.get_eig_group.interior(),
@@ -871,33 +873,181 @@ normal modes."""
 				menubutton_width = 10,
 		)
 		self.nma_direction.pack(anchor = 'w', padx = 10, pady = 10)
+		
+		# Get eigenvectors
+		self.nma_get_eigev = Pmw.ButtonBox(self.get_eig_group.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.nma_get_eigev.add('Get eigenvectors',fg='blue', command = self.run_ipca)
+		self.nma_get_eigev.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		
+		## second group
+		## Mean square fluctuation
+		self.nma_second_group = Pmw.Group(self.nma_page,  tag_pyclass = None)
+		self.nma_second_group.pack(expand=1, fill='both')
+		
+		self.nma_msf = Pmw.Group(self.nma_second_group.interior(), tag_text='Mean square fluctuation (4)')
+		self.nma_msf.pack(expand=1, fill='both', side=LEFT)
+		
+		# read PDB
+		self.msf_pdb = Pmw.EntryField(self.nma_msf.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'PDB file:',
+												)
+		self.msf_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# read conformation PDB
+		self.msf_conf_pdb = Pmw.EntryField(self.nma_msf.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'Conformation PDB file:',
+												)
+		self.msf_conf_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# first mode
+		
+		self.nma_first_mode = Pmw.EntryField(self.nma_msf.interior(),
+                                                labelpos = 'w',
+                                                label_text = 'First mode:',
+												command = self.get_pc_selection)
+		self.nma_first_mode.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# second mode
+		
+		self.nma_second_mode = Pmw.EntryField(self.nma_msf.interior(),
+                                                labelpos = 'w',
+                                                label_text = 'Second mode:',
+												command = self.get_pc_selection)
+		self.nma_second_mode.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		#W matrix file
+		self.msf_WMatrixFile = Pmw.EntryField(self.nma_msf.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'W Matrix File:',
+												)
+		self.msf_WMatrixFile.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		#VT matrix file
+		self.msf_VTMatrixFile = Pmw.EntryField(self.nma_msf.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'VT Matrix File:',
+												)
+		self.msf_VTMatrixFile.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# Run MSF
+		self.run_msf_button = Pmw.ButtonBox(self.nma_msf.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_msf_button.add('Run MSF',fg='blue', command = self.run_ipca)
+		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		##====================================
+		# conformation/ combination mode
+		
+		self.nma_conf_mode = Pmw.Group(self.nma_second_group.interior(),
+			tag_text='Conformation/Combination mode (5)')
+		self.nma_conf_mode.pack(expand=1, fill='both', side=LEFT)
+		
+		## Unaligned PDB file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'Unaligned PDB file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## PDB file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'PDB file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## VT Matrix file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'VT Matrix file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## Output file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'Output file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# Get conformation mode
+		self.run_msf_button = Pmw.ButtonBox(self.nma_conf_mode.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_msf_button.add('Get conf. modes',fg='blue', command = self.run_ipca)
+		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		# Get combination mode
+		self.run_msf_button = Pmw.ButtonBox(self.nma_conf_mode.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_msf_button.add('Get comb. modes',fg='blue', command = self.run_ipca)
+		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		##====================================
+		# mode visualization
+		
+		self.nma_mode_vis = Pmw.Group(self.nma_second_group.interior(), tag_text='Mode visualization (6)')
+		self.nma_mode_vis.pack(expand=1, fill='both', side=LEFT)
+		
+		## CG PDB file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_mode_vis.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'CG PDB file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## mode index value
+		self.mode_indx_value = Pmw.EntryField(self.nma_mode_vis.interior(),
+												labelpos = 'w',
+												command = self.get_pc_selection,                                                
+												label_text = 'Mode index value:',
+												)
+		self.mode_indx_value.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## Vector file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_mode_vis.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'Vector file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# Get mode visualization
+		self.run_msf_button = Pmw.ButtonBox(self.nma_mode_vis.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_msf_button.add('Get modes Vis',fg='blue', command = self.run_ipca)
+		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
 		# Exit button
 		
-		self.exit_pca = Pmw.ButtonBox(self.nma_group.interior(),orient='horizontal', padx=0,pady=0)
+		self.exit_pca = Pmw.ButtonBox(self.nma_page,orient='horizontal', padx=0,pady=0)
 		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
-		# status bar
-		pca_output='test'
-		self.pca_output_group = Pmw.Group(self.nma_page, tag_text='Results')
-		self.pca_output_group.pack(side=BOTTOM, expand = 1, padx=2, pady=2)
-		self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
-                             borderframe=5,
-                             vscrollmode='dynamic',
-                             hscrollmode='dynamic',
-                             labelpos='n',
-                             text_width=150, text_height=4,
-                             text_wrap='word',
-                             text_background='#000000',
-                             text_foreground='white',
-                             text_font = myfont
-                             )
-		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-		self.status_feild.insert('end',pca_output)
-		self.text_field.configure(text_state=DISABLED)
-		#sys.stdout = StdoutRedirector(self.status_feild)
 		
-		
+		#
 		#---------------------------------------------------------------
         # ABOUT PAGE
 		#=======================================================

@@ -308,14 +308,14 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			text_foreground='white',
 			text_font = myfont)
 			
-		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		self.text_field.pack(expand = 1, fill = 'both', padx = 4, pady = 4)
 		self.text_field.insert('end',about_pca)
 		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
 		self.icpca_trj_file_io = Pmw.Group(self.ipca_page, tag_text='MODE-TASK Input/Output')
-		self.icpca_trj_file_io.pack(side = TOP,expand=1, fill='x')
+		self.icpca_trj_file_io.pack(side = TOP,expand=1, fill='both')
 		
 		
 		# Read Trajectory 
@@ -345,12 +345,12 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			
 		Pmw.alignlabels(entries)	
 		
-		# PCA options
+		# internal PCA options
 		#------------------------------------------
 		
-		# PCA Methods
+	
 		self.ipca_page_main_group = Pmw.Group(self.ipca_page, tag_text='Internal PCA Options')
-		self.ipca_page_main_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		self.ipca_page_main_group.pack(fill = 'both', expand = 1, padx=2, pady=2)
 		
 		## cordinate type
 		self.ct_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
@@ -369,20 +369,20 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		self.ct_buttons.invoke('distance')
 		
 		# Atom group 
-		self.atm_grp_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
+		self.ipca_atm_grp_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
 				buttontype = 'radiobutton',
 				selectmode = 'single',
 				labelpos = 'w',
 				label_text = 'Atom group:',
 				frame_borderwidth = 2,
-				frame_relief = 'groove',
-				command = self.get_ag_selection)
-		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.atm_grp_buttons.add('All', command = self.ok)
-		self.atm_grp_buttons.add('CA', command = self.ok)
-		self.atm_grp_buttons.add('Backbone', command = self.ok)
-		self.atm_grp_buttons.add('Protein', command = self.ok)
-		self.atm_grp_buttons.invoke('CA')
+				frame_relief = 'groove')
+				#command = self.get_ipca_ag_selection)
+		self.ipca_atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.ipca_atm_grp_buttons.add('All', command = self.ok)
+		self.ipca_atm_grp_buttons.add('CA', command = self.ok)
+		self.ipca_atm_grp_buttons.add('Backbone', command = self.ok)
+		self.ipca_atm_grp_buttons.add('Protein', command = self.ok)
+		self.ipca_atm_grp_buttons.invoke('CA')
 		
 
 		# Number of PCA component
@@ -394,7 +394,8 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		self.pca_comp.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		
 		
-		pca_options_buttons=(self.ct_buttons, self.atm_grp_buttons,
+		pca_options_buttons=(self.ct_buttons, 
+			self.ipca_atm_grp_buttons,
 			self.pca_comp)
 		Pmw.alignlabels(pca_options_buttons)
 		
@@ -1227,23 +1228,37 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			else:				
 				tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
-		
-			out = `os.system(cmd)` 
-			tkMessageBox.showinfo("pyMODE-TASK!", "PCA run successful!\nResults are written in Output Directory!")
 			
+			out = `os.system(cmd)`
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tPCA run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "PCA run failed. See terminal for details!")			
 		
 	def run_ipca(self):
 	
 		# core scripts are located at src directory under pyMODE-TASK directory
 		cmd_dir = './src'
-		trj_loc = self.trj_location.getvalue()
-		top_loc = self.top_location.getvalue()
+		trj_loc = self.ipca_trj_location.getvalue()
+		top_loc = self.ipca_top_location.getvalue()
 		ct_sele = self.ct_buttons.getvalue()
-		ag_sele = self.atm_grp_buttons.getvalue()
+		ag_sele = self.ipca_atm_grp_buttons.getvalue()
 		pc_comp = self.pca_comp.getvalue()
-		out_loc = self.out_dir_location.getvalue()
-		cmd = './src/internal_pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele
-		print os.system(cmd)
+		out_loc = self.ipca_out_dir_location.getvalue()
+	
+		if trj_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+		if top_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+		else:	
+			cmd = './src/internal_pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele
+			out = `os.system(cmd)`
+			print type(out)
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tInternal PCA run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "Internal PCA run failed. See terminal for details!")
+
 		
 	def pca_set_trj_filename(self, filename):
 		n = self.pca_trj_location.setvalue(filename)
@@ -1279,6 +1294,10 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		
 	def get_ag_selection(self, sele_option):
 		n=self.atm_grp_buttons.getvalue()
+		return n
+		
+	def get_ipca_ag_selection(self, sele_option):
+		n=self.ipca_atm_grp_buttons.getvalue()
 		return n
 		
 	def get_pc_selection(self, sele_option):

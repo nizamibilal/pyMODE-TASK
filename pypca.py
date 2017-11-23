@@ -124,7 +124,8 @@ class App:
 		# about section
 		
 		about_pca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
-To perform the Priciple component analysis (PCA) on a protein MD trajectory."""		
+
+Perform the Priciple component analysis (PCA) on a protein MD trajectory."""		
 		self.pca_top_group = Pmw.Group(self.pca_page,tag_text='About')
 		self.pca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
@@ -291,8 +292,7 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		
 		# about section
 		
-		about_ipca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
-Internal PCA allows user to perform the PCA on the internal cordinates of a protein MD trajectory."""
+		about_ipca = """Internal PCA allows user to perform the PCA on the internal cordinates of a protein MD trajectory."""
 		self.ipca_top_group = Pmw.Group(self.ipca_page,tag_text='About')
 		self.ipca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
@@ -309,7 +309,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			text_font = myfont)
 			
 		self.text_field.pack(expand = 1, fill = 'both', padx = 4, pady = 4)
-		self.text_field.insert('end',about_pca)
+		self.text_field.insert('end',about_ipca)
 		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
@@ -441,6 +441,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		#==============================================================
 		
 		about_mds = """Perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory.
+		
 MDS and t-SNE are dimentionality reduction techniques."""		
 		self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
 		self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
@@ -712,9 +713,10 @@ MDS and t-SNE are dimentionality reduction techniques."""
         # NMA PAGE
 		#==============================================================
 		
-		about_nma = """NMA analyses the oscillations of a structure. For proteins, it is useful for studying the large amplitude motions for a selected conformation. The main assumption
-is that the motions are harmonic. Thus, each normal mode, which is a concerted motion of many atoms, acts as a simple harmonic oscillator, and it is independent of all the other
-normal modes."""
+		about_nma = """NMA analyses the oscillations of a structure. For proteins, it is useful for studying
+the large amplitude motions for a selected conformation. The main assumption is that the motions are harmonic.
+Thus, each normal mode, which is a concerted motion of many atoms, acts as a simple harmonic oscillator, and 
+it is independent of all the other normal modes."""
 
 		self.nma_top_group = Pmw.Group(self.nma_page,tag_text='About')
 		self.nma_top_group.pack(fill = 'both', expand = 1, padx = 2, pady = 2)
@@ -744,9 +746,9 @@ normal modes."""
 		
 		
 		# Read PDB file 
-		self.pdb_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.cg_pdb_location = Pmw.EntryField(self.trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_cg_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
 												label_text = 'PDB File:',
 												)
 		# coarse grain level
@@ -760,16 +762,32 @@ normal modes."""
 				menubutton_width = 10,
 		)
 		
+		# Starting atom
+		self.cg_start_atm = Pmw.EntryField(self.trj_file_io.interior(),
+			labelpos = 'w',
+			label_text = 'Starting atom:',
+			value='1')
+		self.cg_start_atm.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
 		# output directory
 		
-		self.nma_out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
+		self.cg_out_dir_location = Pmw.EntryField(self.trj_file_io.interior(),
 												labelpos = 'w',
-												label_pyclass = DirDialogButtonClassFactory.get(self.nma_set_out_location),
+												label_pyclass = DirDialogButtonClassFactory.get(self.set_cg_out_location),                                                
 												label_text = 'Output Directory:',
-												value = os.getcwd())
-		entries=(self.pdb_location,
+												value  = os.getcwd())
+		
+		# out pdb file name
+		self.cg_out_pdb = Pmw.EntryField(self.trj_file_io.interior(),
+			labelpos = 'w',
+			label_text = 'Output PDB:',
+			value='ComplexCG.pdb')
+		self.cg_out_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		entries=(self.cg_pdb_location,
 					self.cg_level,
-					self.nma_out_dir_location)
+					self.cg_start_atm,
+					self.cg_out_dir_location,
+					self.cg_out_pdb)
 					
 		for x in entries:
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -779,7 +797,7 @@ normal modes."""
 			orient='horizontal',
 			padx=0,
 			pady=0)
-		self.run_cg_button.add('Run Coarse Graining',fg='blue', command = self.run_ipca)
+		self.run_cg_button.add('Run Coarse Graining',fg='blue', command = self.run_cg)
 		self.run_cg_button.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 			
 		Pmw.alignlabels(entries)
@@ -792,7 +810,7 @@ normal modes."""
 		# Read PDB file 
 		self.nma_pdb_location = Pmw.EntryField(self.nma_group.interior(),
 												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_nma_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
 												label_text = 'PDB File:',
 												)
 		self.nma_pdb_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -1315,6 +1333,28 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "t-SNE run failed. See terminal for details!")
 	
+	def run_cg(self):
+		# core scripts are located at src directory under pyMODE-TASK directory
+		cmd_dir = './src'
+		pdb_loc = self.cg_pdb_location.getvalue()
+		cg_level = self.cg_level.getvalue()
+		out_loc = self.cg_out_dir_location.getvalue()
+		#out_loc = out_loc + '/ComplexCG.pdb'
+		out_pdb = self.cg_out_pdb.getvalue()
+		print out_loc
+		start_atm = self.cg_start_atm.getvalue()
+		atm_type = 'CB'
+		if pdb_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No PDB location given!")
+		else:	
+			cmd = './src/coarseGrain.py --pdb ' + pdb_loc + ' --cg ' + cg_level + ' --atomType ' + atm_type + ' --startingAtom ' + start_atm + ' --outdir ' + out_loc + ' --output ' + out_pdb
+			out = `os.system(cmd)`
+			#print type(out)
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tCoarse graining run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "Coarse graining run failed. See terminal for details!")
+	
 	def pca_set_trj_filename(self, filename):
 		n = self.pca_trj_location.setvalue(filename)
 		return n
@@ -1394,6 +1434,17 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		
 	def get_mds_cord_type(self, sele_option):
 		n=self.mds_cord_type.getvalue()
+		return n
+	
+	def set_cg_pdb_filename(self, filename):
+		n = self.cg_pdb_location.setvalue(filename)
+		return n
+		
+	def set_cg_out_location(self, dirname):
+		self.cg_out_dir_location.setvalue(dirname)
+		
+	def set_nma_pdb_filename(self, filename):
+		n = self.nma_pdb_location.setvalue(filename)
 		return n
 		
 	def about(self):

@@ -509,16 +509,16 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 				buttontype = 'radiobutton',
 				selectmode = 'single',
 				labelpos = 'w',
-				label_text = 'PCA Method:',
+				label_text = 'MDS Method:',
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_mds_type_selection)
 		self.mds_type_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.mds_type_buttons.add('mteric', command = self.ok)
-		self.mds_type_buttons.add('nonmetric', command = self.ok)
+		self.mds_type_buttons.add('metric', command = self.ok, text='metric')
+		self.mds_type_buttons.add('nm', command = self.ok, text ='nonmetric')
 	
 		
-		self.mds_type_buttons.invoke('mteric')
+		self.mds_type_buttons.invoke('metric')
 		
 		# Atom group 
 		self.atm_grp_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
@@ -546,9 +546,9 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 				frame_relief = 'groove',
 				command = self.get_mds_dissimilarity_type)
 		self.mds_dissimilarity_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.mds_dissimilarity_type.add('Euclidean distance', command = self.ok)
-		self.mds_dissimilarity_type.add('RSMD', command = self.ok)
-		self.mds_dissimilarity_type.invoke('RSMD')
+		self.mds_dissimilarity_type.add('euc', command = self.ok, text='Euclidean distance')
+		self.mds_dissimilarity_type.add('rmsd', command = self.ok, text='RMSD')
+		self.mds_dissimilarity_type.invoke('rmsd')
 		
 		# Cordinate Type
 		self.mds_cord_type = Pmw.RadioSelect(self.mds_page_main_group.interior(),
@@ -569,7 +569,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		self.mds_cord_type.invoke('distance')
 		
 		# Atom Indices 
-		self.atm_ind_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
+		self.mds_atm_ind_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
 				buttontype = 'radiobutton',
 				selectmode = 'single',
 				labelpos = 'w',
@@ -577,23 +577,29 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_ag_selection)
-		self.atm_ind_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.atm_ind_buttons.add('All', command = self.ok)
-		self.atm_ind_buttons.add('CA', command = self.ok)
-		self.atm_ind_buttons.add('Backbone', command = self.ok)
-		self.atm_ind_buttons.add('Protein', command = self.ok)
-		self.atm_ind_buttons.invoke('CA')
+		self.mds_atm_ind_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		self.mds_atm_ind_buttons.add('all', command = self.ok, text='All')
+		self.mds_atm_ind_buttons.add('alpha', command = self.ok, text='CA')
+		self.mds_atm_ind_buttons.add('backbone', command = self.ok, text='Backbone')
+		self.mds_atm_ind_buttons.add('minimal', command = self.ok, text='Minimal')
+		self.mds_atm_ind_buttons.invoke('alpha')
+		
 		mds_options_buttons=(self.mds_type_buttons, 
 			self.atm_grp_buttons,  
 			self.mds_dissimilarity_type, 
 			self.mds_cord_type,
-			self.atm_ind_buttons)
+			self.mds_atm_ind_buttons)
 		Pmw.alignlabels(mds_options_buttons)
 		
 		# Run MDS button
 		
-		self.run_mds_button = Pmw.ButtonBox(self.mds_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
-		self.run_mds_button.add('Run MDS',fg='blue', command = self.run_pca)
+		self.run_mds_button = Pmw.ButtonBox(self.mds_page_main_group.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_mds_button.add('Run MDS',
+			fg='blue', 
+			command = self.run_mds)
 		self.run_mds_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
 		# Exit button
@@ -690,7 +696,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		# Run t-SNE button
 		
 		self.run_mds_button = Pmw.ButtonBox(self.tsne_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
-		self.run_mds_button.add('Run t-SNE',fg='blue', command = self.run_pca)
+		self.run_mds_button.add('Run t-SNE',fg='blue', command = self.run_tsne)
 		self.run_mds_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
 		# Exit button
@@ -1253,21 +1259,65 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		else:	
 			cmd = './src/internal_pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele
 			out = `os.system(cmd)`
-			print type(out)
+			#print type(out)
 			if out == '0':
 				tkMessageBox.showinfo("pyMODE-TASK!", "\tInternal PCA run successful!\nResults are written in Output Directory!")
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "Internal PCA run failed. See terminal for details!")
 
-		
+	def run_mds(self):
+	
+		# core scripts are located at src directory under pyMODE-TASK directory
+		cmd_dir = './src'
+		trj_loc = self.mds_trj_location.getvalue()
+		top_loc = self.mds_top_location.getvalue()
+		mds_type = self.mds_type_buttons.getvalue()
+		ct_sele = self.mds_cord_type.getvalue()
+		ag_sele = self.atm_grp_buttons.getvalue()
+		dist_type = self.mds_dissimilarity_type.getvalue()
+		out_loc = self.mds_out_dir_location.getvalue()
+		atm_ind = self.mds_atm_ind_buttons.getvalue()
+		if trj_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+		if top_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+		else:	
+			cmd = './src/mds.py -t '+ trj_loc + ' -p ' + top_loc + ' -mt ' + mds_type +' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele + ' -ai ' + atm_ind + ' -dt ' + dist_type
+			out = `os.system(cmd)`
+			#print type(out)
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tMDS run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "MDS run failed. See terminal for details!")
+	
+	def run_tsne(self):
+	
+		# core scripts are located at src directory under pyMODE-TASK directory
+		cmd_dir = './src'
+		trj_loc = self.mds_trj_location.getvalue()
+		top_loc = self.mds_top_location.getvalue()
+		ct_sele = self.mds_cord_type.getvalue()
+		ag_sele = self.atm_grp_buttons.getvalue()
+		dist_type = self.mds_dissimilarity_type.getvalue()
+		out_loc = self.mds_out_dir_location.getvalue()
+		atm_ind = self.mds_atm_ind_buttons.getvalue()
+		if trj_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+		if top_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+		else:	
+			cmd = './src/tsne.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele + ' -ai ' + atm_ind + ' -dt ' + dist_type
+			out = `os.system(cmd)`
+			#print type(out)
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tt-SNE run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "t-SNE run failed. See terminal for details!")
+	
 	def pca_set_trj_filename(self, filename):
 		n = self.pca_trj_location.setvalue(filename)
 		return n
-		
-	def mds_set_trj_filename(self, filename):
-		n = self.mds_trj_location.setvalue(filename)
-		return n
-		
+				
 	def ipca_set_trj_filename(self, filename):
 		n = self.ipca_trj_location.setvalue(filename)
 		return n
@@ -1283,6 +1333,16 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 	def get_mds_type_selection(self, sele_option):
 		n=self.mds_type_buttons.getvalue()
 		return n
+	
+	def mds_set_trj_filename(self, filename):
+		n = self.mds_trj_location.setvalue(filename)
+		return n
+
+	def mds_set_top_filename(self, filename):
+		self.mds_top_location.setvalue(filename)
+	
+	def mds_set_out_location(self, dirname):
+		self.mds_out_dir_location.setvalue(dirname)
 
 	def get_st_selection(self, sele_option):
 		n=self.svd_solver_type.getvalue()
@@ -1314,8 +1374,6 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 	def ipca_set_top_filename(self, filename):
 		self.ipca_top_location.setvalue(filename)
 	
-	def mds_set_top_filename(self, filename):
-		self.mds_top_location.setvalue(filename)
 		
 	def set_ref_filename(self, filename):
 		self.pca_ref_file.setvalue(filename)
@@ -1325,10 +1383,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 	
 	def ipca_set_out_location(self, dirname):
 		self.ipca_out_dir_location.setvalue(dirname)
-	
-	def mds_set_out_location(self, dirname):
-		self.mds_out_dir_location.setvalue(dirname)
-	
+		
 	def nma_set_out_location(self, dirname):
 		self.nma_out_dir_location.setvalue(dirname)
 	

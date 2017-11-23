@@ -759,7 +759,7 @@ it is independent of all the other normal modes."""
 				label_text = 'CG Level:',
 				menubutton_textvariable = self.var,
 				items = ['1', '2', '3', '4', '5', '6'],
-				menubutton_width = 10,
+				menubutton_width = 5,
 		)
 		
 		# Starting atom
@@ -767,7 +767,6 @@ it is independent of all the other normal modes."""
 			labelpos = 'w',
 			label_text = 'Starting atom:',
 			value='1')
-		self.cg_start_atm.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		
 		# output directory
 		
@@ -782,7 +781,7 @@ it is independent of all the other normal modes."""
 			labelpos = 'w',
 			label_text = 'Output PDB:',
 			value='ComplexCG.pdb')
-		self.cg_out_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+
 		entries=(self.cg_pdb_location,
 					self.cg_level,
 					self.cg_start_atm,
@@ -820,10 +819,11 @@ it is independent of all the other normal modes."""
 		# Cutoff in Ang
 		self.nma_cut = Pmw.EntryField(self.nma_group.interior(),
                                                 labelpos = 'w',
-                                                label_text = 'Cutoff (A):',
+                                                label_text = 'Cutoff (Angstrom):',
 												value='15',
 												command = self.get_pc_selection)
 		self.nma_cut.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
 		
 		# output directory
 		
@@ -845,7 +845,7 @@ it is independent of all the other normal modes."""
 			orient='horizontal',
 			padx=0,
 			pady=0)
-		self.run_pca_button.add('Run NMA',fg='blue', command = self.run_ipca)
+		self.run_pca_button.add('Run NMA',fg='blue', command = self.run_nma)
 		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
 		#===============================================
@@ -1348,6 +1348,29 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			tkMessageBox.showinfo("pyMODE-TASK Error!", "No PDB location given!")
 		else:	
 			cmd = './src/coarseGrain.py --pdb ' + pdb_loc + ' --cg ' + cg_level + ' --atomType ' + atm_type + ' --startingAtom ' + start_atm + ' --outdir ' + out_loc + ' --output ' + out_pdb
+			out = `os.system(cmd)`
+			#print type(out)
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tCoarse graining run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "Coarse graining run failed. See terminal for details!")
+	
+	def run_nma(self):
+		# core scripts are located at src directory under pyMODE-TASK directory
+		cmd_dir = './src'
+		pdb_loc = self.nma_pdb_location.getvalue()
+		cutoff = self.nma_cut.getvalue()
+		out_loc = self.nma_out_dir_location.getvalue()
+		#out_loc = out_loc + '/ComplexCG.pdb'
+		#out_pdb = self.cg_out_pdb.getvalue()
+		#print out_loc
+		#start_atm = self.cg_start_atm.getvalue()
+		atm_type = 'CB'
+		#/ANM --pdb Tutorial/EV71_CG4.pdb  --outdir Tutorial --atomType CB --cutoff 24
+		if pdb_loc == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No PDB location given!")
+		else:	
+			cmd = './src/ANM --pdb ' + pdb_loc + ' --cutoff ' + cutoff + ' --outdir ' + out_loc + ' --atomType ' + atm_type
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':

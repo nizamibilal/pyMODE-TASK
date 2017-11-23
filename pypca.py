@@ -440,25 +440,26 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		#
 		#==============================================================
 		
-		#about_mds = """To perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory."""		
-		#self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
-		#self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
-        #
-		#myfont = Pmw.logicalfont(name='Helvetica',size=14)
-		#self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
-		#	borderframe=5,
-		#	vscrollmode='dynamic',
-		#	hscrollmode='dynamic',
-		#	labelpos='n',
-		#	text_width=150, text_height=1,
-		#	text_wrap='word',
-		#	text_background='deepskyblue2',
-		#	text_foreground='black',
-		#	text_font = myfont)
-		#	
-		#self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 1)
-		#self.text_field.insert('end',about_mds)
-		#self.text_field.configure(text_state=DISABLED)
+		about_mds = """Perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory.
+MDS and t-SNE are dimentionality reduction techniques."""		
+		self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
+		self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+        
+		myfont = Pmw.logicalfont(name='Helvetica',size=14)
+		self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
+			borderframe=5,
+			vscrollmode='dynamic',
+			hscrollmode='dynamic',
+			labelpos='n',
+			text_width=150, text_height=3,
+			text_wrap='word',
+			text_background='skyblue4',
+			text_foreground='white',
+			text_font = myfont)
+			
+		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 1)
+		self.text_field.insert('end',about_mds)
+		self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -502,7 +503,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		radiogroups = []
 		
 		self.mds_page_main_group = Pmw.Group(self.radioframe, tag_text='MDS Options')
-		self.mds_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
+		self.mds_page_main_group.pack(side=LEFT, fill = 'both', expand = 1, padx=4, pady=4)
 		
 		radiogroups.append(self.mds_page_main_group)
 		self.mds_type_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
@@ -615,7 +616,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		# t-SNE options
 		
 		self.tsne_page_main_group = Pmw.Group(self.radioframe, tag_text='t-SNE Options')
-		self.tsne_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
+		self.tsne_page_main_group.pack(side=LEFT, fill = 'both', expand = 1, padx=4, pady=4)
 		
 		radiogroups.append(self.tsne_page_main_group)
 

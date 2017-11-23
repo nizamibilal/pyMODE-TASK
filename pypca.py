@@ -2,11 +2,9 @@
 #filename: pypca.py
 import matplotlib
 matplotlib.use('Agg')
-#import Tkinter as Tk
 from Tkinter import *
 import subprocess
 from ttk import Separator, Style
-#from Tkinter import ttk
 import ttk
 import Pmw
 import tkMessageBox, tkFileDialog
@@ -15,7 +13,7 @@ import webbrowser
 
 
 class App:
-
+	'Main class of pyMODE-TASK.'
 	def __init__(self, master):
 		
 		
@@ -26,7 +24,7 @@ class App:
 		#================================================
 		#
 		# Menu bar
-		#====================
+		#===============================================
 		# Create about dialog.
 		self.dialog1 = Pmw.MessageDialog(master,
 			title = 'pyMODE-TASK',
@@ -37,14 +35,13 @@ class App:
 				'and Normal mode analyses (NMA) on protein 3D structure.\n'+
 				'pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.\n',
 			buttonboxpos = 's',
-			#iconpos = 'n',
-			#icon_bitmap = (r'@py.ico'),
 			buttons = ('OK', 'Close'),
 			defaultbutton = 'Close')
 		self.dialog1.iconname('pyMODE-TASK')
 		widget = self.dialog1.component('hull')
 		Pmw.Color.changecolor(widget, background = 'brown4', foreground='white')
 		self.dialog1.withdraw()
+		
 		# Create the Balloon.
 		self.balloon = Pmw.Balloon(master)
 
@@ -55,9 +52,8 @@ class App:
 				hull_borderwidth = 2,
 				balloon = self.balloon)
 		self.menuBar.pack(fill = 'x')
-		#self.menuBar = menuBar
 		
-		# Add File menubar.
+		# Add File menu bar.
 		self.menuBar.addmenu('File', 'Close this window or exit')
 		self.menuBar.addmenuitem('File', 'command', 'About the pyMODE-TASK',
 				label = 'About',
@@ -68,25 +64,29 @@ class App:
 				label = 'Exit',
 				command=self.frame.quit)
 	
-		# Add Help menubar.
-		
+		# Add Help menu bar.
+		page=MyHelpPage("file:///home/bilal/work/pyMODE-TASK/src/docs/build/html/index.html")
 		self.menuBar.addmenu('Help', 'Help page')
 		self.menuBar.addmenuitem('Help', 'command', label='Help Page',
-			command=self.open_help)
-			
+			command=page.openpage)
+		
+		page=MyHelpPage("file:///home/bilal/work/pyMODE-TASK/src/docs/build/html/theory.html")		
 		self.menuBar.addmenuitem('Help', 'separator')
 		self.menuBar.addmenuitem('Help', 'command', label='PCA Theory',
-			command=self.open_pca_theory)
-		#self.menuBar.addmenuitem('Help', 'separator')
+			command=page.openpage)
+		
+		page=MyHelpPage("file:///home/bilal/work/pyMODE-TASK/src/docs/build/html/theory.html")		
 		self.menuBar.addmenuitem('Help', 'command', label='NMA Theory', 
-			command=self.open_nma_theory)
-			
+			command=page.openpage)
+		
+		page=MyHelpPage("file:///home/bilal/work/pyMODE-TASK/src/docs/build/html/pca_tut.html")			
 		self.menuBar.addmenuitem('Help', 'separator')
 		self.menuBar.addmenuitem('Help', 'command', label='PCA Tutorial',
-			command=self.open_pca_tutorial)
-		#self.menuBar.addmenuitem('Help', 'separator')
+			command=page.openpage)
+		
+		page=MyHelpPage("file:///home/bilal/work/pyMODE-TASK/src/docs/build/html/nma_tut.html")		
 		self.menuBar.addmenuitem('Help', 'command', label='NMA Tutorial',
-			command=self.open_nma_tutorial)
+			command=page.openpage)
 		
 		
 		# the title
@@ -99,7 +99,7 @@ class App:
 				font=('Arial', 11))
 		self.title_label.pack(expand = 0, fill = 'both', padx = 1, pady = 1)
 		
-		# the basic notebook
+		# the notebook layout
 
 		self.notebook = Pmw.NoteBook(master)
 		Pmw.Color.changecolor(master, background='gray70', foreground='black')
@@ -182,9 +182,14 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		for x in entries:
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 			
-		Pmw.alignlabels(entries)	
+		Pmw.alignlabels(entries)
+		
+		#--------------------------------------------
 		# PCA options
+		#--------------------------------------------
+		
 		# PCA Methods
+		
 		self.pca_page_main_group = Pmw.Group(self.pca_page, tag_text='PCA Options')
 		self.pca_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
 		
@@ -264,7 +269,6 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.svd_solver_type.add('Randomized', command = self.ok)
 		
 		self.svd_solver_type.invoke('Auto')
-		#print self.svd_solver_type.getvalue()
 		pca_options_buttons=(self.pca_methods_buttons, self.atm_grp_buttons, self.pca_comp, self.kernel_type, self.svd_solver_type)
 		Pmw.alignlabels(pca_options_buttons)
 		
@@ -280,31 +284,6 @@ To perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
-		# status bar
-		
-		#self.bytes = 0
-		#self.maxbytes = 0 destroy
-		#self.progress["value"] = 0
-		#self.maxbytes = 50000
-		#self.progress["maximum"] = 50000
-		#self.progress = ttk.Progressbar(self.pca_page_main_group.interior(), orient="horizontal",
-										#length=200, mode="indeterminate")
-		#self.progress.pack()
-		#pca_output='test'
-		#self.pca_output_group = Pmw.Group(self.pca_page, tag_text='Results')
-		#self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
-		#self.pca_status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
-        #                     borderframe=5,
-        #                     vscrollmode='dynamic',
-        #                     hscrollmode='dynamic',
-        #                     labelpos='n',
-        #                     text_width=150, text_height=4,
-        #                     text_wrap='word',
-        #                     text_background='#000000',
-        #                     text_foreground='white',
-        #                     text_font = myfont
-        #                     )
-		#
 		##============================================================
 		#
 		#	internal PCA page
@@ -365,7 +344,10 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 			x.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 			
 		Pmw.alignlabels(entries)	
+		
 		# PCA options
+		#------------------------------------------
+		
 		# PCA Methods
 		self.ipca_page_main_group = Pmw.Group(self.ipca_page, tag_text='Internal PCA Options')
 		self.ipca_page_main_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
@@ -431,24 +413,24 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
-		# status bar
-		pca_output='test'
-		self.pca_output_group = Pmw.Group(self.ipca_page, tag_text='Results')
-		self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
-		self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
-                             borderframe=5,
-                             vscrollmode='dynamic',
-                             hscrollmode='dynamic',
-                             labelpos='n',
-                             text_width=150, text_height=4,
-                             text_wrap='word',
-                             text_background='#000000',
-                             text_foreground='white',
-                             text_font = myfont
-                             )
-		self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-		self.status_feild.insert('end',pca_output)
-		self.text_field.configure(text_state=DISABLED)
+		## status bar
+		#pca_output='test'
+		#self.pca_output_group = Pmw.Group(self.ipca_page, tag_text='Results')
+		#self.pca_output_group.pack(fill = 'both', expand = 0, padx=2, pady=2)
+		#self.status_feild = Pmw.ScrolledText(self.pca_output_group.interior(),
+        #                     borderframe=5,
+        #                     vscrollmode='dynamic',
+        #                     hscrollmode='dynamic',
+        #                     labelpos='n',
+        #                     text_width=150, text_height=4,
+        #                     text_wrap='word',
+        #                     text_background='#000000',
+        #                     text_foreground='white',
+        #                     text_font = myfont
+        #                     )
+		#self.status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		#self.status_feild.insert('end',pca_output)
+		#self.text_field.configure(text_state=DISABLED)
 		#sys.stdout = StdoutRedirector(self.status_feild)
 		
 		
@@ -512,12 +494,13 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		Pmw.alignlabels(entries)	
 		
 		# MDS options
+		#-------------------------------------------------
+		
 		# MDS Type
 		self.radioframe = Frame(self.mds_page)
 		radiogroups = []
 		
 		self.mds_page_main_group = Pmw.Group(self.radioframe, tag_text='MDS Options')
-		#self.mds_page_main_group.groupchildsite(tag_text='MDS Options')
 		self.mds_page_main_group.pack(fill = 'both', expand = 1, padx=4, pady=4)
 		
 		radiogroups.append(self.mds_page_main_group)
@@ -583,7 +566,6 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		self.mds_cord_type.add('angle', command = self.ok)
 		
 		self.mds_cord_type.invoke('distance')
-		#print self.svd_solver_type.getvalue()
 		
 		# Atom Indices 
 		self.atm_ind_buttons = Pmw.RadioSelect(self.mds_page_main_group.interior(),
@@ -621,6 +603,7 @@ Internal PCA allows user to perform the PCA on the internal cordinates of a prot
 		
 		##=========================================
 		# t-SNE options
+		#-----------------------------------------
 		
 		# t-SNE options
 		
@@ -768,7 +751,6 @@ normal modes."""
 				items = ['1', '2', '3', '4', '5', '6'],
 				menubutton_width = 10,
 		)
-		#self.cg_level.pack(anchor = 'w', padx = 10, pady = 10)
 		
 		# output directory
 		
@@ -863,12 +845,9 @@ normal modes."""
 		
 		# Direction
 		
-		#self.var1 = StringVar()
-		#self.var1.set('4')
 		self.nma_direction = Pmw.OptionMenu(self.get_eig_group.interior(),
 				labelpos = 'w',
 				label_text = 'Direction:',
-				#menubutton_textvariable = self.var,
 				items = ['1', '-1'],
 				menubutton_width = 10,
 		)
@@ -1047,8 +1026,8 @@ normal modes."""
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
 		
 		
-		#
-		#---------------------------------------------------------------
+		
+		#=====================================================
         # ABOUT PAGE
 		#=======================================================
 		
@@ -1214,98 +1193,17 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		self.exit_pca = Pmw.ButtonBox(self.help_top_group.interior(),orient='horizontal', padx=0,pady=0)
 		self.exit_pca.add('EXIT', fg='red', command = self.frame.quit)
 		self.exit_pca.pack(side=RIGHT, expand = 1, padx = 10, pady = 2)
-		
-	def open_help(self):
-		webbrowser.open_new("src/docs/build/html/intro.html")
-		
-	def open_pca_theory(self):
-		webbrowser.open_new("src/docs/build/html/theory.html")
 	
-	def open_nma_theory(self):
-		webbrowser.open_new("src/docs/build/html/theory.html")
-		
-	def open_pca_tutorial(self):
-		webbrowser.open_new("src/docs/build/html/pca_tut.html")
-		
-	def open_nma_tutorial(self):
-		webbrowser.open_new("src/docs/build/html/nma_tut.html")
 		
 	def execute(self):
 		self.about.show()
-		
-	def click_link(self):
-		webbrowser.open_new(r"http://www.google.com")
-	
-	def button_pressed(self, result):
-		if hasattr(result,'keycode'):
-			if result.keycode == 36:
-				if self.notebook.getcurselection()=='Grid Settings':
-					self.show_box()
-				elif self.notebook.getcurselection()=='View Poses':
-					self.load_ligand_file()
-		elif result == 'Exit' or result == None:
-			self.dialog.withdraw()
+
 	def ok(self):
 		print 'You clicked on OK'
 		
-	def load_gpf_file(self):
-		global global_status
-		filename = self.gpf_file_location.get()
-		fp = self.fileopen(filename,'r')
-		if not fp:
-			return
-		lst = fp.readlines()
-		new = []
-		for line in lst:
-			if line.strip():
-				new.append(line.strip())
-		lst = new
-		for line in lst:
-			entr = line.split()
-			if entr[0] == 'npts':
-				n_points_X = int(entr[1])
-				n_points_Y = int(entr[2])
-				n_points_Z = int(entr[3])
-				self.n_points_X.set(n_points_X)
-				self.n_points_Y.set(n_points_Y)
-				self.n_points_Z.set(n_points_Z)
-			elif entr[0] == 'spacing':
-				spacing = float(entr[1])
-				self.grid_spacing.set(spacing)
-			elif entr[0] == 'gridcenter':
-				if entr[1]!='auto':
-					grid_X = float(entr[1])
-					grid_Y = float(entr[2])
-					grid_Z = float(entr[3])
-					self.grid_center[0].set(grid_X)
-					self.grid_center[1].set(grid_Y)
-					self.grid_center[2].set(grid_Z)
-		global_status.set( 'Reading box info from %s' % filename)
-		self.grid_center_selection_mode.set(GRID_CENTER_FROM_COORDINATES)
-		self.calculate_box()
-		
-	def save_gpf_file(self):
-		global global_status
-		filename = self.gpf_file_location.get()
-		fp = self.fileopen(filename,'w')
-		if not fp:
-				return
-		n_points_X = self.n_points_X.get()
-		n_points_Y = self.n_points_Y.get()
-		n_points_Z = self.n_points_Z.get()
-		spacing = self.grid_spacing.get()
-		center_X = self.grid_center[0].get()
-		center_Y = self.grid_center[1].get()
-		center_Z = self.grid_center[2].get()
-		print >>fp, 'npts %d %d %d' % (n_points_X, n_points_Y, n_points_Z)
-		print >>fp, 'spacing %5.3f' % spacing
-		print >>fp, 'gridcenter  %8.3f %8.3f %8.3f' % (center_X, center_Y, center_Z)
-		fp.close()
-		global_status.set( 'Wrote box info to %s' % filename)
-	
 	def run_pca(self):
-		#self.progress.pack()
 		
+		# core scripts are located at src directory under pyMODE-TASK directory
 		cmd_dir = './src'
 		trj_loc = self.pca_trj_location.getvalue()
 		top_loc = self.pca_top_location.getvalue()
@@ -1316,57 +1214,36 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		pc_comp = self.pca_comp.getvalue()
 		out_loc = self.pca_out_dir_location.getvalue()
 		ref_loc = self.pca_ref_file.getvalue()
-		#p = subprocess.Popen('./script',stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
 
 		if trj_loc == '':
 			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
-		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
 		if top_loc == '':
 			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
 		
 		else:
 			if ref_loc != '':
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
-				#self.progress["maximum"] = 50000
 			else:				
 				tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
 				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
-		#print os.system(cmd)
-			#self.progress.start()
-			#p = subprocess.Popen('pwd',stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-			#output, errors = p.communicate()
-			#print output
-			#print errors
+		
 			out = `os.system(cmd)` 
-			#self.pca_status_feild.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-			#self.progress.stop()
-			#self.pca_status_feild.insert('end',pca_output)3e
-			#self.pca_status_feild.insert("end", output)
-			#self.pca_status_feild.configure(text_state=DISABLED)
 			tkMessageBox.showinfo("pyMODE-TASK!", "PCA run successful!\nResults are written in Output Directory!")
-			#self.progress.start()
 			
-
-			#return out
-		#pca_output = os.system(cmd)
-		#return pca_outputd
 		
 	def run_ipca(self):
+	
+		# core scripts are located at src directory under pyMODE-TASK directory
 		cmd_dir = './src'
 		trj_loc = self.trj_location.getvalue()
 		top_loc = self.top_location.getvalue()
 		ct_sele = self.ct_buttons.getvalue()
-		#print ct_sele
 		ag_sele = self.atm_grp_buttons.getvalue()
 		pc_comp = self.pca_comp.getvalue()
 		out_loc = self.out_dir_location.getvalue()
-		#print trj_loc, top_loc, pc_sele, st_sele, kt_sele, ag_sele, pc_comp, out_loc, ref_loc 
 		cmd = './src/internal_pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag ' + ag_sele + ' -out ' + out_loc + ' -ct ' + ct_sele
-		#print cmd
 		print os.system(cmd)
-		#pca_output = os.system(cmd)
-		#return pca_output
 		
 	def pca_set_trj_filename(self, filename):
 		n = self.pca_trj_location.setvalue(filename)
@@ -1939,10 +1816,16 @@ class IORedirector(object):
 	'''A general class for redirecting I/O to this Text widget.'''
 	def __init__(self,text_area):
 		self.text_area = text_area
-class StdoutRedirector(IORedirector):
-	'''A class for redirecting stdout to this Text widget.'''
-	def write(self,message):
-		self.text_area.insert("insert", message)
+
+
+class MyHelpPage:
+	'A class for opening web help pages'
+	def __init__(self, url):
+		self.url=url
+		
+	def openpage(self):
+		#print self.url
+		webbrowser.open_new(self.url)
 		
 root = Tk()
 app = App(root)

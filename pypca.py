@@ -120,7 +120,7 @@ class App:
 		#---------------------------------------------------------------
         # 							PCA PAGE
 		#---------------------------------------------------------------
-		
+		self.balloon = Pmw.Balloon(master)
 		# about section
 		
 		about_pca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
@@ -157,24 +157,33 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 												label_pyclass = FileDialogButtonClassFactory.get(self.pca_set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
+		self.balloon.bind(self.pca_trj_location, 'Read MD Trajectory file',
+                'Read MD Trajectory file')
 		# Read Topology 						
 		self.pca_top_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
                                                 labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
                                                 label_text = 'Topology File:')
+		self.balloon.bind(self.pca_top_location, 'Read Topology file',
+                'Read Topology file')
 		# RMSD Reference Structure
 		
 		self.pca_ref_file = Pmw.EntryField(self.pca_trj_file_io.interior(),
                                                 labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.set_ref_filename,mode='r',filter=[("PDB",".pdb"), ("All","*.*")]),                                                
                                                 label_text = 'Ref Structure/Frame:')
+		
+		self.balloon.bind(self.pca_ref_file, 'Reference structure for RMSD',
+                'Reference structure for RMSD')
 		# output directory
 		
 		self.pca_out_dir_location = Pmw.EntryField(self.pca_trj_file_io.interior(),
 												labelpos = 'w',
 												label_pyclass = DirDialogButtonClassFactory.get(self.pca_set_out_location),
 												label_text = 'Output Directory:',
-												value = os.getcwd())
+												value = os.getcwd())										
+		self.balloon.bind(self.pca_out_dir_location, 'Results will be saved here',
+                'Results will be saved here')
 		entries=(self.pca_trj_location,
 					self.pca_top_location,
 					self.pca_ref_file,
@@ -202,6 +211,10 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_pc_method_selection)
+		
+		self.balloon.bind(self.pca_methods_buttons, 'PCA Method',
+                'PCA Method')
+				
 		self.pca_methods_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.pca_methods_buttons.add('svd', command = self.ok)
 		self.pca_methods_buttons.add('evd', command = self.ok)
@@ -219,6 +232,9 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_ag_selection)
+				
+		self.balloon.bind(self.atm_grp_buttons, 'Select atoms for analyses',
+                'Select atoms for analyses')
 		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.atm_grp_buttons.add('All', command = self.ok)
 		self.atm_grp_buttons.add('CA', command = self.ok)
@@ -233,6 +249,8 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
                                                 label_text = 'PCA component:',
 												value='All',
 												command = self.get_pc_selection)
+		self.balloon.bind(self.pca_comp, 'No. of Priciple Component to save',
+                'No. of Priciple Component to save')
 		self.pca_comp.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		
 		# Kernel Type
@@ -244,6 +262,8 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_kt_selection)
+		self.balloon.bind(self.kernel_type, 'Type of Kernel.\nUsed with kpca method',
+                'Type of Kernel')
 		self.kernel_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.kernel_type.add('Linear', command = self.ok)
 		self.kernel_type.add('Poly', command = self.ok)
@@ -263,6 +283,8 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 				frame_relief = 'groove',
 				command = self.get_st_selection
 				)
+		self.balloon.bind(self.svd_solver_type, 'Type of SVD solver.\nOnly useful with SVD method',
+                'Type of SVD solver')
 		self.svd_solver_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.svd_solver_type.add('Auto', command = self.ok)
 		self.svd_solver_type.add('Full', command = self.ok)
@@ -848,15 +870,76 @@ it is independent of all the other normal modes."""
 		self.run_pca_button.add('Run NMA',fg='blue', command = self.run_nma)
 		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
+		##====================================
+		# conformation/ combination mode
+		
+		self.nma_conf_mode = Pmw.Group(self.nma_top_group1.interior(),
+			tag_text='Conformation/Combination mode (3)')
+		self.nma_conf_mode.pack(expand=1, fill='both', side=LEFT)
+		
+		## Unaligned PDB file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'Unaligned PDB file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## PDB file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'PDB file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## VT Matrix file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'VT Matrix file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		## Output file
+		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
+												labelpos = 'w',
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_text = 'Output file:',
+												)
+		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
+		# Get conformation mode
+		self.run_msf_button = Pmw.ButtonBox(self.nma_conf_mode.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_msf_button.add('Get conf. modes',fg='blue', command = self.run_conf_mode)
+		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		# Get combination mode
+		self.run_msf_button = Pmw.ButtonBox(self.nma_conf_mode.interior(),
+			orient='horizontal',
+			padx=0,
+			pady=0)
+		self.run_msf_button.add('Get comb. modes',fg='blue', command = self.run_ipca)
+		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
+		
+		
+		
+		## second group
 		#===============================================
+		self.nma_second_group = Pmw.Group(self.nma_page,  tag_pyclass = None)
+		self.nma_second_group.pack(expand=1, fill='both')
+		
 		# Get eigenvectors
-		self.get_eig_group = Pmw.Group(self.nma_top_group1.interior(), tag_text='Get Eigenvectors (3)')
+		self.get_eig_group = Pmw.Group(self.nma_second_group.interior(), tag_text='Get Eigenvectors (4)')
 		self.get_eig_group.pack(expand=1, fill='both', side=LEFT)
 		
 		# read VT file
 		self.nma_vtfile_location = Pmw.EntryField(self.get_eig_group.interior(),
 												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
+												label_pyclass = FileDialogButtonClassFactory.get(self.set_nma_vtfile_location,mode='r',filter=[("TXT",".txt")]),                                                
 												label_text = 'VT value file:',
 												)
 		self.nma_vtfile_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
@@ -879,21 +962,25 @@ it is independent of all the other normal modes."""
 		)
 		self.nma_direction.pack(anchor = 'w', padx = 10, pady = 10)
 		
+		# output directory
+		self.gi_out_dir_location = Pmw.EntryField(self.get_eig_group.interior(),
+												labelpos = 'w',
+												label_pyclass = DirDialogButtonClassFactory.get(self.set_gi_out_location),
+												label_text = 'Output Directory:',
+												value = os.getcwd())
+		self.gi_out_dir_location.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
+		
 		# Get eigenvectors
 		self.nma_get_eigev = Pmw.ButtonBox(self.get_eig_group.interior(),
 			orient='horizontal',
 			padx=0,
 			pady=0)
-		self.nma_get_eigev.add('Get eigenvectors',fg='blue', command = self.run_ipca)
+		self.nma_get_eigev.add('Get eigenvectors',fg='blue', command = self.run_get_eigen)
 		self.nma_get_eigev.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
-		
-		## second group
 		## Mean square fluctuation
-		self.nma_second_group = Pmw.Group(self.nma_page,  tag_pyclass = None)
-		self.nma_second_group.pack(expand=1, fill='both')
 		
-		self.nma_msf = Pmw.Group(self.nma_second_group.interior(), tag_text='Mean square fluctuation (4)')
+		self.nma_msf = Pmw.Group(self.nma_second_group.interior(), tag_text='Mean square fluctuation (5)')
 		self.nma_msf.pack(expand=1, fill='both', side=LEFT)
 		
 		# read PDB
@@ -952,60 +1039,7 @@ it is independent of all the other normal modes."""
 		self.run_msf_button.add('Run MSF',fg='blue', command = self.run_ipca)
 		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
-		##====================================
-		# conformation/ combination mode
 		
-		self.nma_conf_mode = Pmw.Group(self.nma_second_group.interior(),
-			tag_text='Conformation/Combination mode (5)')
-		self.nma_conf_mode.pack(expand=1, fill='both', side=LEFT)
-		
-		## Unaligned PDB file
-		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
-												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
-												label_text = 'Unaligned PDB file:',
-												)
-		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		
-		## PDB file
-		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
-												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
-												label_text = 'PDB file:',
-												)
-		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		
-		## VT Matrix file
-		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
-												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
-												label_text = 'VT Matrix file:',
-												)
-		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		
-		## Output file
-		self.conf_mode_Unalgn_pdb = Pmw.EntryField(self.nma_conf_mode.interior(),
-												labelpos = 'w',
-												label_pyclass = FileDialogButtonClassFactory.get(self.set_pdb_filename,mode='r',filter=[("PDB",".pdb")]),                                                
-												label_text = 'Output file:',
-												)
-		self.conf_mode_Unalgn_pdb.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		
-		# Get conformation mode
-		self.run_msf_button = Pmw.ButtonBox(self.nma_conf_mode.interior(),
-			orient='horizontal',
-			padx=0,
-			pady=0)
-		self.run_msf_button.add('Get conf. modes',fg='blue', command = self.run_ipca)
-		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
-		
-		# Get combination mode
-		self.run_msf_button = Pmw.ButtonBox(self.nma_conf_mode.interior(),
-			orient='horizontal',
-			padx=0,
-			pady=0)
-		self.run_msf_button.add('Get comb. modes',fg='blue', command = self.run_ipca)
-		self.run_msf_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
 		##====================================
 		# mode visualization
@@ -1374,9 +1408,37 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tCoarse graining run successful!\nResults are written in Output Directory!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tNMA run successful!\nResults are written in Output Directory!")
 			else:
-				tkMessageBox.showinfo("pyMODE-TASK!", "Coarse graining run failed. See terminal for details!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "NMA run failed. See terminal for details!")
+	
+	def run_conf_mode(self):
+		# core scripts are located at src directory under pyMODE-TASK directory
+		cmd_dir = './src'
+		unaligned_pdb=9
+	
+	def run_get_eigen(self):
+	
+		# core scripts are located at src directory under pyMODE-TASK directory
+		cmd_dir = './src'
+		nma_vt_file=self.nma_vtfile_location.getvalue()
+		mode_idx = self.nma_mode_idx.getvalue()
+		direction = self.nma_direction.getvalue()
+		out_loc = out_loc = self.gi_out_dir_location.getvalue()
+		print nma_vt_file
+		if nma_vt_file == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No VT Matrix file given!")
+		if mode_idx == '':
+			tkMessageBox.showinfo("pyMODE-TASK Error!", "No mode index given!")
+		else:	
+			#./getEigenVectors --vtMatrix Tutorial/VT_values.txt --mode 9 --direction 1 --outdir Tutorial/
+			cmd = './src/getEigenVectors --vtMatrix ' + nma_vt_file + ' --mode ' + mode_idx + ' --outdir ' + out_loc 
+			out = `os.system(cmd)`
+			#print type(out)
+			if out == '0':
+				tkMessageBox.showinfo("pyMODE-TASK!", "\tNMA run successful!\nResults are written in Output Directory!")
+			else:
+				tkMessageBox.showinfo("pyMODE-TASK!", "NMA run failed. See terminal for details!")
 	
 	def pca_set_trj_filename(self, filename):
 		n = self.pca_trj_location.setvalue(filename)
@@ -1468,6 +1530,14 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		
 	def set_nma_pdb_filename(self, filename):
 		n = self.nma_pdb_location.setvalue(filename)
+		return n
+		
+	def set_nma_vtfile_location(self, filename):
+		n =self.nma_vtfile_location.setvalue(filename)
+		return n
+		
+	def set_gi_out_location(self, filename):
+		n=self.gi_out_dir_location.setvalue(filename)
 		return n
 		
 	def about(self):

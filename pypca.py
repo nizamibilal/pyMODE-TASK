@@ -31,7 +31,7 @@ class App:
 			message_text = 'A pymol plugin for MODE-TASK\n\n'+
 				'Version 1.0\n\n\n'+
 				'MODE-TASK is a open source collection of tools to perform the\n'+
-				'Priciple component analysis (PCA), MDS and t-SNE on a protein MD trajectory,\n' +
+				'Principal component analysis (PCA), MDS and t-SNE on a protein MD trajectory,\n' +
 				'and Normal mode analyses (NMA) on protein 3D structure.\n'+
 				'pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.\n',
 			buttonboxpos = 's',
@@ -125,7 +125,7 @@ class App:
 		
 		about_pca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
 
-Perform the Priciple component analysis (PCA) on a protein MD trajectory."""		
+Perform the Principal component analysis (PCA) on a protein MD trajectory."""		
 		self.pca_top_group = Pmw.Group(self.pca_page,tag_text='About')
 		self.pca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
@@ -216,10 +216,10 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
                 'PCA Method')
 				
 		self.pca_methods_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.pca_methods_buttons.add('svd', command = self.ok)
-		self.pca_methods_buttons.add('evd', command = self.ok)
-		self.pca_methods_buttons.add('kpca', command = self.ok)
-		self.pca_methods_buttons.add('ipca', command = self.ok)
+		self.pca_methods_buttons.add('svd', command = self.ok, text='SVD')
+		self.pca_methods_buttons.add('evd', command = self.ok, text='EVD')
+		self.pca_methods_buttons.add('kpca', command = self.ok, text='KernelPCA')
+		self.pca_methods_buttons.add('ipca', command = self.ok, text='Incremental PCA')
 		
 		self.pca_methods_buttons.invoke('svd')
 		
@@ -236,10 +236,10 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.balloon.bind(self.atm_grp_buttons, 'Select atoms for analyses',
                 'Select atoms for analyses')
 		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.atm_grp_buttons.add('All', command = self.ok)
-		self.atm_grp_buttons.add('CA', command = self.ok)
-		self.atm_grp_buttons.add('Backbone', command = self.ok)
-		self.atm_grp_buttons.add('Protein', command = self.ok)
+		self.atm_grp_buttons.add('all', command = self.ok, text='All')
+		self.atm_grp_buttons.add('CA', command = self.ok, text='C-Alpha')
+		self.atm_grp_buttons.add('backbone', command = self.ok, text='Backbone')
+		self.atm_grp_buttons.add('protein', command = self.ok, text='Protein')
 		self.atm_grp_buttons.invoke('CA')
 		
 
@@ -249,8 +249,8 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
                                                 label_text = 'PCA component:',
 												value='All',
 												command = self.get_pc_selection)
-		self.balloon.bind(self.pca_comp, 'No. of Priciple Component to save',
-                'No. of Priciple Component to save')
+		self.balloon.bind(self.pca_comp, 'No. of Principal Component to save',
+                'No. of Principal Component to save')
 		self.pca_comp.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		
 		# Kernel Type
@@ -265,13 +265,13 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.balloon.bind(self.kernel_type, 'Type of Kernel.\nUsed with kpca method',
                 'Type of Kernel')
 		self.kernel_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.kernel_type.add('Linear', command = self.ok)
-		self.kernel_type.add('Poly', command = self.ok)
-		self.kernel_type.add('RBF', command = self.ok)
-		self.kernel_type.add('Sigmoid', command = self.ok)
-		self.kernel_type.add('Precomputed', command = self.ok)
-		self.kernel_type.add('Cosine', command = self.ok)
-		self.kernel_type.invoke('Linear')
+		self.kernel_type.add('linear', command = self.ok, text='Linear')
+		self.kernel_type.add('poly', command = self.ok, text='Poly')
+		self.kernel_type.add('rbf', command = self.ok, text='RBF')
+		self.kernel_type.add('sigmoid', command = self.ok, text='Sigmoid')
+		self.kernel_type.add('precomputed', command = self.ok, text='Precomputed')
+		self.kernel_type.add('cosine', command = self.ok, text='Cosine')
+		self.kernel_type.invoke('linear')
 		
 		# SVD Solver
 		self.svd_solver_type = Pmw.RadioSelect(self.pca_page_main_group.interior(),
@@ -286,12 +286,12 @@ Perform the Priciple component analysis (PCA) on a protein MD trajectory."""
 		self.balloon.bind(self.svd_solver_type, 'Type of SVD solver.\nOnly useful with SVD method',
                 'Type of SVD solver')
 		self.svd_solver_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
-		self.svd_solver_type.add('Auto', command = self.ok)
-		self.svd_solver_type.add('Full', command = self.ok)
-		self.svd_solver_type.add('Arpack', command = self.ok)
-		self.svd_solver_type.add('Randomized', command = self.ok)
+		self.svd_solver_type.add('auto', command = self.ok, text='Auto')
+		self.svd_solver_type.add('full', command = self.ok, text='Full')
+		self.svd_solver_type.add('arpack', command = self.ok, text='Arpack')
+		self.svd_solver_type.add('randomized', command = self.ok, text='Randomized')
 		
-		self.svd_solver_type.invoke('Auto')
+		self.svd_solver_type.invoke('auto')
 		pca_options_buttons=(self.pca_methods_buttons, self.atm_grp_buttons, self.pca_comp, self.kernel_type, self.svd_solver_type)
 		Pmw.alignlabels(pca_options_buttons)
 		
@@ -1275,25 +1275,83 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		out_loc = self.pca_out_dir_location.getvalue()
 		ref_loc = self.pca_ref_file.getvalue()
 
-
-		if trj_loc == '':
-			tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
-		if top_loc == '':
-			tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
-		
-		else:
-			if ref_loc != '':
-				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
-			else:				
-				tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
-				cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
+		# run SVD
+		if pc_sele == 'svd':
+			if trj_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+			if top_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
 			
-			out = `os.system(cmd)`
-			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tPCA run successful!\nResults are written in Output Directory!")
 			else:
-				tkMessageBox.showinfo("pyMODE-TASK!", "PCA run failed. See terminal for details!")			
+				if ref_loc != '':
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc + ' -st ' + st_sele
+				else:				
+					tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -st ' + st_sele
+				
+				out = `os.system(cmd)`
+				if out == '0':
+					tkMessageBox.showinfo("pyMODE-TASK!", "\tPCA (SVD) run successful!\nResults are written in Output Directory!")
+				else:
+					tkMessageBox.showinfo("pyMODE-TASK!", "PCA (SVD) run failed. See terminal for details!")			
+		# run EVD
+		elif pc_sele == 'evd':
+			if trj_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+			if top_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+			
+			else:
+				if ref_loc != '':
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc
+				else:				
+					tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
+				
+				out = `os.system(cmd)`
+				if out == '0':
+					tkMessageBox.showinfo("pyMODE-TASK!", "\tPCA (EVD) run successful!\nResults are written in Output Directory!")
+				else:
+					tkMessageBox.showinfo("pyMODE-TASK!", "PCA (EVD) run failed. See terminal for details!")
+		# run kernel PCA
+		elif pc_sele == 'kpca':
+			if trj_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+			if top_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+			
+			else:
+				if ref_loc != '':
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc + ' -kt ' + kt_sele
+				else:				
+					tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -kt ' + kt_sele
+				
+				out = `os.system(cmd)`
+				if out == '0':
+					tkMessageBox.showinfo("pyMODE-TASK!", "\tKernel PCA run successful!\nResults are written in Output Directory!")
+				else:
+					tkMessageBox.showinfo("pyMODE-TASK!", "Kernel PCA run failed. See terminal for details!")
 		
+		# run ipca
+		elif pc_sele == 'ipca':
+			if trj_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No trajectory location given!")
+			if top_loc == '':
+				tkMessageBox.showinfo("pyMODE-TASK Error!", "No topology location given!")
+			
+			else:
+				if ref_loc != '':
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc + ' -r ' + ref_loc 
+				else:				
+					tkMessageBox.showinfo("pyMODE-TASK warning!", "No Ref structure given, using deafult first frame!")
+					cmd = './src/pca.py -t '+ trj_loc + ' -p ' + top_loc + ' -ag '+ ag_sele + ' -pt '+ pc_sele + ' -out ' + out_loc
+				
+				out = `os.system(cmd)`
+				if out == '0':
+					tkMessageBox.showinfo("pyMODE-TASK!", "\tIncremental PCA run successful!\nResults are written in Output Directory!")
+				else:
+					tkMessageBox.showinfo("pyMODE-TASK!", "Incremental PCA run failed. See terminal for details!")	
 	def run_ipca(self):
 	
 		# core scripts are located at src directory under pyMODE-TASK directory

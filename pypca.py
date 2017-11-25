@@ -1291,7 +1291,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 				
 				out = `os.system(cmd)`
 				if out == '0':
-					tkMessageBox.showinfo("pyMODE-TASK!", "\tPCA (SVD) run successful!\nResults are written in Output Directory!")
+					tkMessageBox.showinfo("pyMODE-TASK!", "PCA (SVD) run successful!\nResults are written in\n" + out_loc)
 				else:
 					tkMessageBox.showinfo("pyMODE-TASK!", "PCA (SVD) run failed. See terminal for details!")			
 		# run EVD
@@ -1310,7 +1310,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 				
 				out = `os.system(cmd)`
 				if out == '0':
-					tkMessageBox.showinfo("pyMODE-TASK!", "\tPCA (EVD) run successful!\nResults are written in Output Directory!")
+					tkMessageBox.showinfo("pyMODE-TASK!", "PCA (EVD) run successful!\nResults are written in \n" + out_loc)
 				else:
 					tkMessageBox.showinfo("pyMODE-TASK!", "PCA (EVD) run failed. See terminal for details!")
 		# run kernel PCA
@@ -1329,7 +1329,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 				
 				out = `os.system(cmd)`
 				if out == '0':
-					tkMessageBox.showinfo("pyMODE-TASK!", "\tKernel PCA run successful!\nResults are written in Output Directory!")
+					tkMessageBox.showinfo("pyMODE-TASK!", "Kernel PCA run successful!\nResults are written in \n" + out_loc)
 				else:
 					tkMessageBox.showinfo("pyMODE-TASK!", "Kernel PCA run failed. See terminal for details!")
 		
@@ -1349,7 +1349,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 				
 				out = `os.system(cmd)`
 				if out == '0':
-					tkMessageBox.showinfo("pyMODE-TASK!", "\tIncremental PCA run successful!\nResults are written in Output Directory!")
+					tkMessageBox.showinfo("pyMODE-TASK!", "Incremental PCA run successful!\nResults are written in \n" + out_loc)
 				else:
 					tkMessageBox.showinfo("pyMODE-TASK!", "Incremental PCA run failed. See terminal for details!")	
 	def run_ipca(self):
@@ -1421,7 +1421,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tt-SNE run successful!\nResults are written in Output Directory!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "t-SNE run successful!\nResults are written in \n" + out_loc)
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "t-SNE run failed. See terminal for details!")
 	
@@ -1443,7 +1443,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tCoarse graining run successful!\nResults are written in Output Directory!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "Coarse graining run successful!\nResults are written in \n" + out_loc)
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "Coarse graining run failed. See terminal for details!")
 	
@@ -1466,7 +1466,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tNMA run successful!\nResults are written in Output Directory!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "NMA run successful!\nResults are written in \n" + out_loc)
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "NMA run failed. See terminal for details!")
 	
@@ -1494,7 +1494,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tNMA run successful!\nResults are written in Output Directory!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "NMA run successful!\nResults are written in \n" + out_loc)
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "NMA run failed. See terminal for details!")
 	

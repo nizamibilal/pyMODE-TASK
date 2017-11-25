@@ -32,7 +32,7 @@ class App:
 				'Version 1.0\n\n\n'+
 				'MODE-TASK is a open source collection of tools to perform the\n'+
 				'Principal component analysis (PCA), MDS and t-SNE on a protein MD trajectory,\n' +
-				'and Normal mode analyses (NMA) on protein 3D structure.\n'+
+				'and Normal mode analysis (NMA) on protein 3D structure.\n'+
 				'pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.\n',
 			buttonboxpos = 's',
 			buttons = ('OK', 'Close'),
@@ -233,8 +233,8 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 				frame_relief = 'groove',
 				command = self.get_ag_selection)
 				
-		self.balloon.bind(self.atm_grp_buttons, 'Select atoms for analyses',
-                'Select atoms for analyses')
+		self.balloon.bind(self.atm_grp_buttons, 'Select atoms for analysis',
+                'Select atoms for analysis')
 		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.atm_grp_buttons.add('all', command = self.ok, text='All')
 		self.atm_grp_buttons.add('CA', command = self.ok, text='C-Alpha')
@@ -346,11 +346,15 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 												label_pyclass = FileDialogButtonClassFactory.get(self.ipca_set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
+		self.balloon.bind(self.ipca_trj_location, 'Read MD Trajectory file',
+			'Read MD Trajectory file')
 		# Read Topology 						
 		self.ipca_top_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
-                                                labelpos = 'w',
+												labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.ipca_set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
-                                                label_text = 'Topology File:')
+												label_text = 'Topology File:')
+		self.balloon.bind(self.ipca_top_location, 'Read topology file',
+			'Read topology file')
 		# output directory
 		
 		self.ipca_out_dir_location = Pmw.EntryField(self.icpca_trj_file_io.interior(),
@@ -358,6 +362,8 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 												label_pyclass = DirDialogButtonClassFactory.get(self.ipca_set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
+		self.balloon.bind(self.ipca_out_dir_location, 'Results will be saved here',
+			'Results will be saved here')
 		entries=(self.ipca_trj_location,
 					self.ipca_top_location,
 					self.ipca_out_dir_location)
@@ -389,7 +395,9 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 		self.ct_buttons.add('psi', command = self.ok)
 		
 		self.ct_buttons.invoke('distance')
-		
+		self.balloon.bind(self.ct_buttons, 'Type of internal cordinate',
+			'Type of internal cordinate')
+
 		# Atom group 
 		self.ipca_atm_grp_buttons = Pmw.RadioSelect(self.ipca_page_main_group.interior(),
 				buttontype = 'radiobutton',
@@ -406,6 +414,10 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 		self.ipca_atm_grp_buttons.add('Protein', command = self.ok)
 		self.ipca_atm_grp_buttons.invoke('CA')
 		
+		self.balloon.bind(self.ipca_atm_grp_buttons, 'Select atoms for analysis',
+			'Select atoms for analysis')
+
+		
 
 		# Number of PCA component
 		self.pca_comp = Pmw.EntryField(self.ipca_page_main_group.interior(),
@@ -415,6 +427,9 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 												command = self.get_pc_selection)
 		self.pca_comp.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		
+		self.balloon.bind(self.pca_comp, 'No. of principal component to save',
+			'No. of principal component to save')
+
 		
 		pca_options_buttons=(self.ct_buttons, 
 			self.ipca_atm_grp_buttons,

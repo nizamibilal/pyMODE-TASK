@@ -298,7 +298,7 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 		# Run button
 		
 		self.run_pca_button = Pmw.ButtonBox(self.pca_page_main_group.interior(),orient='horizontal', padx=0,pady=0)
-		self.run_pca_button.add('Run PCA',fg='green4', command = self.run_pca)
+		self.run_pca_button.add('Run PCA',fg='blue', command = self.run_pca)
 		self.run_pca_button.pack(side=LEFT, expand = 1, padx = 10, pady = 2)
 		
 		# Exit button
@@ -511,12 +511,17 @@ MDS and t-SNE are dimentionality reduction techniques."""
 												label_pyclass = FileDialogButtonClassFactory.get(self.mds_set_trj_filename,mode='r',filter=[("Gromacs",".xtc"), ("DCD",".dcd"), ("Amber",".mdcrd"), ("All","*.*")]),                                                
 												label_text = 'Trajectory File:',
 												)
+		self.balloon.bind(self.mds_trj_location, 'Read MD trajectory file',
+			'Read MD trajectory file')
+
 		# Read Topology 						
 		self.mds_top_location = Pmw.EntryField(self.mds_trj_file_io.interior(),
                                                 labelpos = 'w',
 												label_pyclass = FileDialogButtonClassFactory.get(self.mds_set_top_filename,mode='r',filter=[("PDB",".pdb"), ("GRO",".gro"), ("All","*.*")]),                                                
                                                 label_text = 'Topology File:')
-	
+		self.balloon.bind(self.mds_top_location, 'Read topology file',
+			'Read topology file')
+
 		# output directory
 		
 		self.mds_out_dir_location = Pmw.EntryField(self.mds_trj_file_io.interior(),
@@ -524,6 +529,9 @@ MDS and t-SNE are dimentionality reduction techniques."""
 												label_pyclass = DirDialogButtonClassFactory.get(self.mds_set_out_location),
 												label_text = 'Output Directory:',
 												value = os.getcwd())
+		self.balloon.bind(self.mds_out_dir_location, 'Results will be saved here',
+			'Results will be saved here')
+
 		entries=(self.mds_trj_location,
 					self.mds_top_location,
 					self.mds_out_dir_location)
@@ -552,6 +560,10 @@ MDS and t-SNE are dimentionality reduction techniques."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_mds_type_selection)
+				
+		self.balloon.bind(self.mds_type_buttons, 'Type of MDS',
+			'Type of MDS')
+
 		self.mds_type_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.mds_type_buttons.add('metric', command = self.ok, text='metric')
 		self.mds_type_buttons.add('nm', command = self.ok, text ='nonmetric')
@@ -568,6 +580,10 @@ MDS and t-SNE are dimentionality reduction techniques."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_ag_selection)
+		
+		self.balloon.bind(self.atm_grp_buttons, 'Select atoms for analysis',
+			'Select atoms for analysis')
+
 		self.atm_grp_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.atm_grp_buttons.add('All', command = self.ok)
 		self.atm_grp_buttons.add('CA', command = self.ok)
@@ -584,6 +600,10 @@ MDS and t-SNE are dimentionality reduction techniques."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_mds_dissimilarity_type)
+		
+		self.balloon.bind(self.mds_dissimilarity_type, 'Type of dissimilarity matrix',
+			'Type of dissimilarity matrix')
+
 		self.mds_dissimilarity_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.mds_dissimilarity_type.add('euc', command = self.ok, text='Euclidean distance')
 		self.mds_dissimilarity_type.add('rmsd', command = self.ok, text='RMSD')
@@ -599,6 +619,9 @@ MDS and t-SNE are dimentionality reduction techniques."""
 				frame_relief = 'groove',
 				command = self.get_mds_cord_type
 				)
+		self.balloon.bind(self.mds_cord_type, 'Internal coordinates type.Only used with euclidean distance',
+			'Internal coordinates type.Only used with euclidean distance')
+
 		self.mds_cord_type.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.mds_cord_type.add('distance', command = self.ok)
 		self.mds_cord_type.add('phi', command = self.ok)
@@ -616,6 +639,10 @@ MDS and t-SNE are dimentionality reduction techniques."""
 				frame_borderwidth = 2,
 				frame_relief = 'groove',
 				command = self.get_ag_selection)
+				
+		self.balloon.bind(self.mds_atm_ind_buttons, 'Group of atom for pairwise distance',
+			'Group of atom for pairwise distance')
+
 		self.mds_atm_ind_buttons.pack(fill = 'both', expand = 1, padx = 10, pady = 2)
 		self.mds_atm_ind_buttons.add('all', command = self.ok, text='All')
 		self.mds_atm_ind_buttons.add('alpha', command = self.ok, text='CA')
@@ -1252,7 +1279,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		Pmw.aboutcopyright('Copyright Bilal Nizami 2017\nAll rights reserved\n The project is licensed under GNU GPL 3.0')
 		Pmw.aboutcontact(
             'To report bug, for help and suggestion contact:\n' +
-            '  email: nizamibilal1064@gmail'
+            '  email: nizamibilal1064@gmail.com'
 		)
 		self.about = Pmw.AboutDialog(self.help_top_group.interior(), applicationname = 'pyMODE-TASK')
 		self.about.withdraw()
@@ -1412,7 +1439,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 			out = `os.system(cmd)`
 			#print type(out)
 			if out == '0':
-				tkMessageBox.showinfo("pyMODE-TASK!", "\tMDS run successful!\nResults are written in Output Directory!")
+				tkMessageBox.showinfo("pyMODE-TASK!", "MDS run successful!\nResults are written in \n" + out_loc)
 			else:
 				tkMessageBox.showinfo("pyMODE-TASK!", "MDS run failed. See terminal for details!")
 	

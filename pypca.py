@@ -1,5 +1,38 @@
 #!/usr/bin/env python
 #filename: pypca.py
+
+
+# pyMODE-TASK  Copyright Notice
+# ============================
+#
+# The pyMODE-TASK -- a plugin for MODE-TASK, source code is copyrighted, but you can freely use and
+# copy it as long as you don't change or remove any of the copyright
+# notices.
+#
+# ----------------------------------------------------------------------
+# pyMODE-TASK plugin is Copyright (C) 2017 by Bilal Nizami
+#
+#                        All Rights Reserved
+#
+# Permission to use, copy, modify, distribute, and distribute modified
+# versions of this software and its documentation for any purpose and
+# without fee is hereby granted, provided that the above copyright
+# notice appear in all copies and that both the copyright notice and
+# this permission notice appear in supporting documentation, and that
+# the name of Bilal Nizami not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+#
+# BILAL NIZAMI DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+# SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+# FITNESS.  IN NO EVENT SHALL BILAL NIZAMI BE LIABLE FOR ANY
+# SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+# RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+# CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# ----------------------------------------------------------------------
+
+#================================================================
 import matplotlib
 matplotlib.use('Agg')
 from Tkinter import *
@@ -11,6 +44,12 @@ import tkMessageBox, tkFileDialog
 import os
 import webbrowser
 
+__version__ = "1.0.0"
+
+"""
+pyMODE-TASK
+
+"""
 
 class App:
 	'Main class of pyMODE-TASK.'
@@ -29,7 +68,7 @@ class App:
 		self.dialog1 = Pmw.MessageDialog(master,
 			title = 'pyMODE-TASK',
 			message_text = 'A pymol plugin for MODE-TASK\n\n'+
-				'Version 1.0\n\n\n'+
+				'Version %s\n\n' %__version__ +
 				'MODE-TASK is a open source collection of tools to perform the\n'+
 				'Principal component analysis (PCA), MDS and t-SNE on a protein MD trajectory,\n' +
 				'and Normal mode analysis (NMA) on protein 3D structure.\n'+
@@ -91,7 +130,7 @@ class App:
 		
 		# the title
 	
-		self.title_label = Label(self.frame, text = 'pyMODE-TASK: A MODE-TASK Plugin for pymol -- Bilal Nizami, RUBi, Rhodes University',
+		self.title_label = Label(self.frame, text = 'pyMODE-TASK: A MODE-TASK Plugin for pymol -- Copyright (C) 2017, Bilal Nizami, RUBi, Rhodes University',
 				background = 'brown4',
 				foreground = 'white', 
 				height=1, 
@@ -126,24 +165,24 @@ class App:
 		about_pca = """MODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University. 
 
 Perform the Principal component analysis (PCA) on a protein MD trajectory."""		
-		self.pca_top_group = Pmw.Group(self.pca_page,tag_text='About')
-		self.pca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
-
-		myfont = Pmw.logicalfont(name='Helvetica',size=14)
-		self.text_field = Pmw.ScrolledText(self.pca_top_group.interior(),
-			borderframe=5,
-			vscrollmode='dynamic',
-			hscrollmode='dynamic',
-			labelpos='n',
-			text_width=150, text_height=4,
-			text_wrap='word',
-			text_background='skyblue4',
-			text_foreground='white',
-			text_font = myfont)
-			
-		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
-		self.text_field.insert('end',about_pca)
-		self.text_field.configure(text_state=DISABLED)
+		#self.pca_top_group = Pmw.Group(self.pca_page,tag_text='About')
+		#self.pca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+        #
+		#myfont = Pmw.logicalfont(name='Helvetica',size=14)
+		#self.text_field = Pmw.ScrolledText(self.pca_top_group.interior(),
+		#	borderframe=5,
+		#	vscrollmode='dynamic',
+		#	hscrollmode='dynamic',
+		#	labelpos='n',
+		#	text_width=150, text_height=4,
+		#	text_wrap='word',
+		#	text_background='skyblue4',
+		#	text_foreground='white',
+		#	text_font = myfont)
+		#	
+		#self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+		#self.text_field.insert('end',about_pca)
+		#self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -315,24 +354,24 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 		# about section
 		
 		about_ipca = """Internal PCA allows user to perform the PCA on the internal cordinates of a protein MD trajectory."""
-		self.ipca_top_group = Pmw.Group(self.ipca_page,tag_text='About')
-		self.ipca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+		#self.ipca_top_group = Pmw.Group(self.ipca_page,tag_text='About')
+		#self.ipca_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
 
 		myfont = Pmw.logicalfont(name='Helvetica',size=14)
-		self.text_field = Pmw.ScrolledText(self.ipca_top_group.interior(),
-			borderframe=5,
-			vscrollmode='dynamic',
-			hscrollmode='dynamic',
-			labelpos='n',
-			text_width=150, text_height=4,
-			text_wrap='word',
-			text_background='skyblue4',
-			text_foreground='white',
-			text_font = myfont)
-			
-		self.text_field.pack(expand = 1, fill = 'both', padx = 4, pady = 4)
-		self.text_field.insert('end',about_ipca)
-		self.text_field.configure(text_state=DISABLED)
+		#self.text_field = Pmw.ScrolledText(self.ipca_top_group.interior(),
+		#	borderframe=5,
+		#	vscrollmode='dynamic',
+		#	hscrollmode='dynamic',
+		#	labelpos='n',
+		#	text_width=150, text_height=4,
+		#	text_wrap='word',
+		#	text_background='skyblue4',
+		#	text_foreground='white',
+		#	text_font = myfont)
+		#	
+		#self.text_field.pack(expand = 1, fill = 'both', padx = 4, pady = 4)
+		#self.text_field.insert('end',about_ipca)
+		#self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -480,24 +519,24 @@ Perform the Principal component analysis (PCA) on a protein MD trajectory."""
 		about_mds = """Perform the Multi Dimentional Scaling (PCA) and t-SNE on a protein MD trajectory.
 		
 MDS and t-SNE are dimentionality reduction techniques."""		
-		self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
-		self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
+		#self.mds_top_group = Pmw.Group(self.mds_page,tag_text='About')
+		#self.mds_top_group.pack(fill = 'both', expand = 0, padx = 2, pady = 2)
         
 		myfont = Pmw.logicalfont(name='Helvetica',size=14)
-		self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
-			borderframe=5,
-			vscrollmode='dynamic',
-			hscrollmode='dynamic',
-			labelpos='n',
-			text_width=150, text_height=3,
-			text_wrap='word',
-			text_background='skyblue4',
-			text_foreground='white',
-			text_font = myfont)
-			
-		self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 1)
-		self.text_field.insert('end',about_mds)
-		self.text_field.configure(text_state=DISABLED)
+		#self.text_field = Pmw.ScrolledText(self.mds_top_group.interior(),
+		#	borderframe=5,
+		#	vscrollmode='dynamic',
+		#	hscrollmode='dynamic',
+		#	labelpos='n',
+		#	text_width=150, text_height=3,
+		#	text_wrap='word',
+		#	text_background='skyblue4',
+		#	text_foreground='white',
+		#	text_font = myfont)
+		#	
+		#self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 1)
+		#self.text_field.insert('end',about_mds)
+		#self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		
@@ -782,24 +821,24 @@ the large amplitude motions for a selected conformation. The main assumption is 
 Thus, each normal mode, which is a concerted motion of many atoms, acts as a simple harmonic oscillator, and 
 it is independent of all the other normal modes."""
 
-		self.nma_top_group = Pmw.Group(self.nma_page,tag_text='About')
-		self.nma_top_group.pack(fill = 'both', expand = 1, padx = 2, pady = 2)
+		#self.nma_top_group = Pmw.Group(self.nma_page,tag_text='About')
+		#self.nma_top_group.pack(fill = 'both', expand = 1, padx = 2, pady = 2)
 				
 		myfont = Pmw.logicalfont(name='Helvetica',size=14)
-		self.text_field = Pmw.ScrolledText(self.nma_top_group.interior(),
-			borderframe=5,
-			vscrollmode='dynamic',
-			hscrollmode='dynamic',
-			labelpos='n',
-			text_width=250, text_height=4,
-			text_wrap='word',
-			text_background='skyblue4',
-			text_foreground='white',
-			text_font = myfont)
-			
-		self.text_field.pack(expand = 1, fill = 'both', padx = 2, pady = 2)
-		self.text_field.insert('end',about_nma)
-		self.text_field.configure(text_state=DISABLED)
+		#self.text_field = Pmw.ScrolledText(self.nma_top_group.interior(),
+		#	borderframe=5,
+		#	vscrollmode='dynamic',
+		#	hscrollmode='dynamic',
+		#	labelpos='n',
+		#	text_width=250, text_height=4,
+		#	text_wrap='word',
+		#	text_background='skyblue4',
+		#	text_foreground='white',
+		#	text_font = myfont)
+		#	
+		#self.text_field.pack(expand = 1, fill = 'both', padx = 2, pady = 2)
+		#self.text_field.insert('end',about_nma)
+		#self.text_field.configure(text_state=DISABLED)
 		
 		# input files
 		self.nma_top_group1 = Pmw.Group(self.nma_page, tag_pyclass = None)
@@ -1137,8 +1176,7 @@ it is independent of all the other normal modes."""
 		
 		about_pca = """
 
-pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.
-		
+pyMODE-TASK- is Copyright (C) 2017 by Bilal Nizami, RUBi, Rhodes University.		
 MODE-TASK is a collection of tools for analysing normal modes and performing principal component analysis.		
 pyMODE-TASK is the pymol plugin of MODE-TASK. Orignal command line version of MODE-TASK can be found at https://github.com/RUBi-ZA/MODE-TASK. 
 
@@ -1164,9 +1202,9 @@ email: nizamibilal1064@gmail.com"""
                              vscrollmode='dynamic',
                              hscrollmode='dynamic',
                              labelpos='n',
-                             text_width=150, text_height=40,
+                             text_width=150, text_height=23,
                              text_wrap='word',
-                             text_background='skyblue4',
+                             text_background='black',
                              text_foreground='white',
                              text_font = myfont
                              )
@@ -1217,9 +1255,9 @@ email: nizamibilal1064@gmail.com"""
                              vscrollmode='dynamic',
                              hscrollmode='dynamic',
                              labelpos='n',
-                             text_width=150, text_height=40,
+                             text_width=150, text_height=23,
                              text_wrap='word',
-                             text_background='skyblue4',
+                             text_background='black',
                              text_foreground='white',
                              text_font = myfont
                              )
@@ -1264,9 +1302,9 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
                              vscrollmode='dynamic',
                              hscrollmode='dynamic',
                              labelpos='n',
-                             text_width=150, text_height=13,
+                             text_width=150, text_height=15,
                              text_wrap='word',
-                             text_background='skyblue4',
+                             text_background='black',
                              text_foreground='white',
                              text_font = myfont
                              )
@@ -1275,7 +1313,7 @@ Research Unit in Bioinformatics (RUBi), Rhodes University, Grahamstown, South Af
 		self.text_field.configure(text_state=DISABLED)
 		
 		# Create dialog.
-		Pmw.aboutversion('1.0')
+		Pmw.aboutversion('%s' % __version__)
 		Pmw.aboutcopyright('Copyright Bilal Nizami 2017\nAll rights reserved\n The project is licensed under GNU GPL 3.0')
 		Pmw.aboutcontact(
             'To report bug, for help and suggestion contact:\n' +
